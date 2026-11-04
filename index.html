@@ -340,6 +340,12 @@ body.pv{background:#fff}body.pv #print{display:block;padding:calc(64px + env(saf
 <script>
 (() => {
 'use strict';
+if (location.hash.startsWith('#pv=')) { (async () => { const h = location.hash.slice(4); history.replaceState(null, '', location.pathname);
+  try { const b = atob(h.slice(1).replace(/-/g, '+').replace(/_/g, '/')), u = Uint8Array.from(b, c => c.charCodeAt(0));
+    const txt = h[0] === 'z' ? await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text() : new TextDecoder().decode(u);
+    const dd = new DOMParser().parseFromString(txt.replace('</body>', '<p class="noprint" style="text-align:center;margin:18px;font:14px system-ui;color:#5d5664">لو شاشة الطباعة مافتحتش: دوس زرار المشاركة ⬆️ ← طباعة</p><style>@media print{.noprint{display:none}}</style></body>'), 'text/html'); document.title = dd.title; document.head.replaceWith(dd.head); document.body.replaceWith(dd.body);
+    setTimeout(() => { try { print(); } catch (e) {} }, 700);
+  } catch (e) { document.body.innerHTML = '<p style="padding:24px">ماقدرتش أفتح التقرير. ارجع للأداة واستخدم «شارك / احفظ».</p>'; } })(); return; }
 /* ================= helpers ================= */
 const $ = id => document.getElementById(id);
 const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -814,16 +820,25 @@ function doPrint(html){ $('print').innerHTML = html;
   document.body.classList.add('pv'); $('pvBar').classList.remove('hide'); scrollTo(0, 0); }
 function closePV(){ document.body.classList.remove('pv'); $('pvBar').classList.add('hide'); $('print').innerHTML = ''; }
 $('pvX').onclick = closePV;
-$('pvPrint').onclick = () => { try { print(); } catch (e) { toast('الطباعة مش متاحة هنا — استخدم «شارك / احفظ»'); } };
-$('pvShare').onclick = async () => {
-  const css = [...document.querySelectorAll('style')].map(x => x.textContent).join('\n');
+const STANDALONE = () => navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+function pvDoc(){ const css = [...document.querySelectorAll('style')].map(x => x.textContent).join('\n');
   const title = ($('print').querySelector('h1')?.textContent || 'تقرير') + ' ' + today();
-  const doc = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>${css}\nbody{background:#fff}#print{display:block;padding:12px}</style></head><body><div id="print">${$('print').innerHTML}</div></body></html>`;
+  return { title, doc:`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>${css}\nbody{background:#fff}#print{display:block;padding:12px}</style></head><body><div id="print">${$('print').innerHTML}</div></body></html>` }; }
+async function packDoc(doc){ let bytes = new TextEncoder().encode(doc), z = 'u';
+  if ('CompressionStream' in window) { bytes = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer()); z = 'z'; }
+  let bin = ''; for (let i = 0; i < bytes.length; i += 32768) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 32768));
+  return z + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+/* iPhone home-screen app can't print: open the report in a Safari window (data travels in the #hash, never sent to any server) */
+$('pvPrint').onclick = async () => {
+  if (!STANDALONE()) { try { print(); } catch (e) { toast('استخدم «شارك / احفظ»'); } return; }
+  const { doc } = pvDoc(), url = location.origin + location.pathname + '#pv=' + await packDoc(doc);
+  const w = window.open(url, '_blank'); if (!w) toast('ماقدرتش أفتح صفحة الطباعة — استخدم «شارك / احفظ»'); };
+$('pvShare').onclick = async () => { const { title, doc } = pvDoc();
   const f = new File([doc], title.replace(/[\\/:*?"<>|]/g, '-') + '.html', { type:'text/html' });
   try { if (navigator.canShare && navigator.canShare({ files:[f] })) { await navigator.share({ files:[f], title }); return; } } catch (e) { if (e.name === 'AbortError') return; }
   download(f.name, doc, 'text/html'); };
 const phead = t => `<div class="rh"><span class="mk">ن</span><div><h1>${esc(t)}</h1><div class="sub">نور الخليج للعطور</div></div><span class="sp"></span><div class="dt">${tm(nowISO())}</div></div>`;
-function printOrder(o){ const l = o.lines[0] || {}; doPrint(phead('أوردر ' + o.oc) + `<table><tr><th>العميل</th><td>${esc(cname(o.clientId))}</td><th>الحالة</th><td>${STATUS[o.status]}</td></tr><tr><th>المنتج</th><td>${esc(l.product)} ${esc(l.size || '')}</td><th>الكمية</th><td>${fmt(l.qty)}</td></tr><tr><th>تاريخ الأوردر</th><td>${dmy(o.createdAt)}</td><th>ميعاد التسليم</th><td>${dmy(o.dueDate) || '—'}</td></tr></table>
+function printOrder(o){ const l = o.lines[0] || {}; doPrint(phead(l.product + (l.size ? ' ' + l.size : '') + ' — ' + cname(o.clientId)) + `<table><tr><th>العميل</th><td>${esc(cname(o.clientId))}</td><th>الحالة</th><td>${STATUS[o.status]}</td></tr><tr><th>المنتج</th><td>${esc(l.product)} ${esc(l.size || '')}</td><th>الكمية</th><td>${fmt(l.qty)}</td></tr><tr><th>تاريخ الأوردر</th><td>${dmy(o.createdAt)}</td><th>ميعاد التسليم</th><td>${dmy(o.dueDate) || '—'}</td></tr></table>
   <table><tr><th>#</th><th>المكوّن</th><th>الصنف</th><th>للقطعة</th><th>المطلوب</th><th>جاهز</th><th>ملاحظة</th></tr>${(o.comps || []).map((c, i) => `<tr><td>${i + 1}</td><td>${esc(CK[c.k]?.[0] || c.k)}</td><td>${esc(c.name)}</td><td>${fmt(c.qty)} ${esc(c.unit)}</td><td>${c.unit === 'قطعة' ? fmt(c.qty * l.qty) : ''}</td><td>${c.ready ? '✓' : '☐'}</td><td>${esc(c.note)}</td></tr>`).join('')}</table>${o.notes ? `<p><b>ملاحظات:</b> ${esc(o.notes)}</p>` : ''}<p style="margin-top:30pt">التوقيع: ____________________</p>`); }
 /* full report: every active order per client, each component with its state (واصل / ناقص) */
 function printFull(onlyId, missOnly){
@@ -837,9 +852,9 @@ function printFull(onlyId, missOnly){
   /* 1) shopping / chasing list: one line per missing item across all orders */
   const B = new Map();
   for (const o of L) for (const c of miss(o)) { const key = c.k + '|' + norm(c.name) + '|' + c.unit; if (!B.has(key)) B.set(key, { c, pcs:0, other:[], orders:[] }); const x = B.get(key), r = req(c, o);
-    if (r != null) { x.pcs += r - gotN(c); if (gotN(c)) x.part = true; } else x.other.push(qtyTxt(c)); x.orders.push(o.oc); }
+    if (r != null) { x.pcs += r - gotN(c); if (gotN(c)) x.part = true; } else x.other.push(qtyTxt(c)); x.orders.push(o); }
   const buy = [...B.values()].sort((a, b) => b.orders.length - a.orders.length || cname2(a.c).localeCompare(cname2(b.c), 'ar'));
-  const buyTbl = buy.length ? `<h2 class="sh">قايمة النواقص المجمّعة — للشراء والمتابعة <span>${buy.length} صنف</span></h2><table class="bt"><thead><tr><th class="bx"></th><th style="width:30%">الصنف</th><th style="width:20%">المطلوب</th><th>مستنياه أوردرات</th></tr></thead><tbody>${buy.map(x => `<tr><td class="bx">☐</td><td><b>${esc(x.c.name || cname2(x.c))}</b><small>${esc(cname2(x.c))}</small></td><td class="n"><b>${x.pcs ? fmt(x.pcs) + ' قطعة' : ''}</b>${x.part ? '<small>بعد خصم اللي وصل جزئي</small>' : ''}${x.other.length ? `<small>${[...new Set(x.other)].join(' / ')} للقطعة</small>` : ''}</td><td class="ol"><b>${x.orders.length}</b> · ${x.orders.join('، ')}</td></tr>`).join('')}</tbody></table>` : '';
+  const buyTbl = buy.length ? `<h2 class="sh">قايمة النواقص المجمّعة — للشراء والمتابعة <span>${buy.length} صنف</span></h2><table class="bt"><thead><tr><th class="bx"></th><th style="width:30%">الصنف</th><th style="width:20%">المطلوب</th><th>مستنياه (العملاء)</th></tr></thead><tbody>${buy.map(x => `<tr><td class="bx">☐</td><td><b>${esc(x.c.name || cname2(x.c))}</b><small>${esc(cname2(x.c))}</small></td><td class="n"><b>${x.pcs ? fmt(x.pcs) + ' قطعة' : ''}</b>${x.part ? '<small>بعد خصم اللي وصل جزئي</small>' : ''}${x.other.length ? `<small>${[...new Set(x.other)].join(' / ')} للقطعة</small>` : ''}</td><td class="ol"><b>${x.orders.length} أوردر:</b> ${Object.entries(x.orders.reduce((m, o) => (m[cname(o.clientId)] = (m[cname(o.clientId)] || 0) + 1, m), {})).sort((p, q) => q[1] - p[1]).map(([c, n]) => esc(c) + (n > 1 ? ` (${n})` : '')).join('، ')}</td></tr>`).join('')}</tbody></table>` : '';
   const sum = `<div class="sum"><div class="g"><small>✓ جاهز للتعبئة</small><b>${fill.length}</b></div><div class="r"><small>✗ واقف على نواقص</small><b>${blocked}</b></div><div><small>سطور ناقصة</small><b>${lines}</b></div>${onlyId ? '' : `<div><small>العملاء</small><b>${groups.length}</b></div>`}</div>`;
   /* 2) per client → order cards */
   const body = groups.map(([cid, os]) => `<table class="cg"><thead><tr><th><h2 class="cl">${esc(cname(cid))}<span>${os.length} أوردر · ${os.filter(o => fill.includes(o)).length} جاهز للتعبئة</span></h2></th></tr></thead><tbody>` + os.sort((a, b) => (fill.includes(b) - fill.includes(a)) || a.createdAt.localeCompare(b.createdAt)).map(o => {
@@ -847,7 +862,7 @@ function printFull(onlyId, missOnly){
       const rows = (o.comps || []).map((c, i) => ({ c, i })).filter(x => !missOnly || !x.c.ready).sort((a, b) => a.c.ready - b.c.ready || a.i - b.i);
       const hasDate = !missOnly && rows.some(x => x.c.ready), hasNote = rows.some(x => x.c.note);
       const verdict = !n ? '<span class="vd">من غير مكوّنات</span>' : m.length ? `<span class="vd no">✗ واقف على: ${esc([...new Set(m.map(cname2))].join('، '))}</span>` : '<span class="vd ok">✓ جاهز للتعبئة</span>';
-      return `<div class="oc"><div class="oh"><span class="code">${esc(o.oc)}</span><span class="pr">${esc(l.product)}${l.size ? ' · ' + esc(l.size) : ''} <b class="q">× ${fmt(l.qty)}</b></span><span class="sp"></span>${verdict}</div>
+      return `<div class="oc"><div class="oh"><span class="pr" style="font-size:11pt">${esc(l.product)}${l.size ? ' · ' + esc(l.size) : ''} <b class="q">× ${fmt(l.qty)}</b></span><span class="sp"></span>${verdict}</div>
       <div class="om">اتعمل ${dmy(o.createdAt)} · ${o.dueDate ? `التسليم ${dmy(o.dueDate)}${d && d.d < 0 ? ` <b>(${d.txt})</b>` : ''}` : 'بدون موعد تسليم'} · ${n - m.length}/${n} واصل</div>
       ${rows.length ? `<table><thead><tr><th class="bx"></th><th style="width:34%">الصنف</th><th style="width:15%">للقطعة</th><th style="width:13%">المطلوب</th><th style="width:13%">الحالة</th>${hasDate ? '<th style="width:11%">وصل</th>' : ''}${hasNote ? '<th>ملاحظة</th>' : ''}</tr></thead><tbody>${rows.map(({ c }) => `<tr class="${c.ready ? 'ok' : 'miss'}"><td class="bx">${c.ready ? '' : '☐'}</td><td class="item">${esc(c.name || cname2(c))}<small>${esc(cname2(c))}</small></td><td class="n">${qtyTxt(c)}</td><td class="n">${req(c, o) != null ? fmt(req(c, o)) : ''}${isPart(c, o) ? `<small>وصل ${fmt(gotN(c))} · باقي <b style="color:#000">${fmt(req(c, o) - gotN(c))}</b></small>` : ''}</td><td>${c.ready ? '<span class="tag ok">✓ واصل</span>' : isPart(c, o) ? '<span class="tag part">◐ جزئي</span>' : '<span class="tag miss">✗ ناقص</span>'}</td>${hasDate ? `<td class="n">${c.ready ? dmy(c.readyAt) : ''}</td>` : ''}${hasNote ? `<td>${esc(c.note)}</td>` : ''}</tr>`).join('')}</tbody></table>` : '<div class="note">كل المكوّنات واصلة ✓</div>'}${o.notes ? `<div class="note">ملاحظات: ${esc(o.notes)}</div>` : ''}</div>`; }).map(h => `<tr><td>${h}</td></tr>`).join('') + '</tbody></table>').join('');
   const title = (missOnly ? 'نواقص ' : 'تفاصيل أوردرات ') + (onlyId ? cname(onlyId) : 'كل العملاء');
@@ -857,8 +872,8 @@ function printFull(onlyId, missOnly){
 function printClient(id){ const L = ord().filter(o => o.clientId === id && isOpen(o));
   doPrint(phead('نواقص ' + cname(id)) + (L.map(o => { const m = (o.comps || []).filter(c => !c.ready); return `<h3 style="margin-top:12pt">${esc(o.oc)} — ${esc(o.lines[0]?.product)} × ${fmt(o.lines[0]?.qty)}</h3>${m.length ? `<table><tr><th>المكوّن</th><th>الصنف</th><th>المطلوب</th><th>ملاحظة</th></tr>${m.map(c => `<tr><td>${esc(CK[c.k]?.[0] || c.k)}</td><td>${esc(c.name)}</td><td>${fmt(c.qty)} ${esc(c.unit)}${c.unit === 'قطعة' ? ' × ' + fmt(o.lines[0]?.qty) + ' = ' + fmt(c.qty * o.lines[0]?.qty) : ''}</td><td>${esc(c.note)}</td></tr>`).join('')}</table>` : '<p>كل المكوّنات جاهزة ✓</p>'}`; }).join('') || '<p>مفيش أوردرات شغالة</p>')); }
 function printPrep(){ const it = prepItems(), G = new Map(); for (const x of it) { const k = CK[x.c.k]?.[0] || x.c.k; if (!G.has(k)) G.set(k, []); G.get(k).push(x); }
-  doPrint(phead('النواقص — حسب المكوّن') + [...G].map(([k, L]) => `<h3 style="margin-top:12pt">${esc(k)} (${L.length})</h3><table><tr><th>الأوردر</th><th>العميل</th><th>المنتج</th><th>الصنف</th><th>المطلوب</th></tr>${L.map(x => `<tr><td>${esc(x.o.oc)}</td><td>${esc(cname(x.o.clientId))}</td><td>${esc(x.o.lines[0]?.product)}</td><td>${esc(x.c.name)}</td><td>${fmt(x.c.qty)} ${esc(x.c.unit)}${x.c.unit === 'قطعة' ? ' = ' + fmt(x.c.qty * x.o.lines[0]?.qty) : ''}</td></tr>`).join('')}</table>`).join('')); }
-function printList(){ const L = filtered(); doPrint(phead(`قايمة الأوردرات (${L.length})`) + `<table><tr><th>الكود</th><th>العميل</th><th>المنتج</th><th>الكمية</th><th>المكوّنات</th><th>الحالة</th><th>الميعاد</th></tr>${L.map(o => { const [r, n] = readyCount(o); return `<tr><td>${esc(o.oc)}</td><td>${esc(cname(o.clientId))}</td><td>${esc(o.lines[0]?.product)}</td><td>${fmt(o.lines[0]?.qty)}</td><td>${r}/${n}</td><td>${STATUS[o.status]}</td><td>${dmy(o.dueDate)}</td></tr>`; }).join('')}</table>`); }
+  doPrint(phead('النواقص — حسب المكوّن') + [...G].map(([k, L]) => `<h3 style="margin-top:12pt">${esc(k)} (${L.length})</h3><table><tr><th>العميل</th><th>المنتج</th><th>الصنف</th><th>المطلوب</th></tr>${L.map(x => `<tr><td>${esc(cname(x.o.clientId))}</td><td>${esc(x.o.lines[0]?.product)}</td><td>${esc(x.c.name)}</td><td>${fmt(x.c.qty)} ${esc(x.c.unit)}${x.c.unit === 'قطعة' ? ' = ' + fmt(x.c.qty * x.o.lines[0]?.qty) : ''}</td></tr>`).join('')}</table>`).join('')); }
+function printList(){ const L = filtered(); doPrint(phead(`قايمة الأوردرات (${L.length})`) + `<table><tr><th>العميل</th><th>المنتج</th><th>الكمية</th><th>المكوّنات</th><th>الحالة</th><th>الميعاد</th></tr>${L.map(o => { const [r, n] = readyCount(o); return `<tr><td>${esc(cname(o.clientId))}</td><td>${esc(o.lines[0]?.product)}</td><td>${fmt(o.lines[0]?.qty)}</td><td>${r}/${n}</td><td>${STATUS[o.status]}</td><td>${dmy(o.dueDate)}</td></tr>`; }).join('')}</table>`); }
 
 /* ================= theme + boot ================= */
 function setTheme(t){ try { localStorage.setItem('no2_theme', t); } catch (e) {} if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); }
