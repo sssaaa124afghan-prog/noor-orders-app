@@ -164,6 +164,9 @@ button.pill{cursor:pointer}button.pill:hover{filter:brightness(.97)}
 .comp .x{width:30px;height:30px;border-radius:8px;color:var(--ink-3);display:grid;place-items:center}.comp .x:hover{background:var(--danger-soft);color:var(--danger)}
 .comp .note{grid-column:2/-1;margin-top:-4px}
 .ca{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--ink-3);border:1px dashed var(--line);position:relative}.ca.has{color:var(--plum);border:1px solid var(--plum);background:var(--plum-soft)}.ca b{position:absolute;top:-6px;inset-inline-end:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--plum);color:var(--on-plum);font-size:10px;display:grid;place-items:center}
+.pl .pa{display:flex;gap:8px;align-items:center;flex:none}
+@media (max-width:1023px){.pl{flex-wrap:wrap;padding-inline-start:16px}.pl .grow{flex:1 1 calc(100% - 50px)}.pl .pa{flex:1 1 100%;padding-inline-start:46px}.pl .pa [data-open]{margin-inline-start:auto}}
+.ths{display:flex;gap:4px;align-items:center;flex:none;padding:2px;border-radius:10px}.ths .th{width:42px;height:42px;border-radius:9px;background:var(--surface-2) center/cover no-repeat;border:1px solid var(--line);display:grid;place-items:center;color:var(--plum)}.ths .th.f{background:var(--plum-soft)}.ths b{font-size:12px;color:var(--ink-2)}
 .attv{position:fixed;inset:0;z-index:60;background:rgb(18 16 20/.92);display:flex;flex-direction:column}.attv .bar{display:flex;gap:8px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;color:#fff}.attv .bar b{flex:1;font-weight:600}.attv .body{flex:1;overflow:auto;padding:10px 14px calc(16px + env(safe-area-inset-bottom));display:grid;gap:12px;align-content:start}.attv img{max-width:100%;border-radius:10px;background:#fff;justify-self:center}.attv .fi{background:#fff;color:#1e1a22;border-radius:10px;padding:12px;display:flex;gap:10px;align-items:center}.attv .fi .sp{flex:1}
 .pct{font-size:12.5px;margin-top:6px;color:var(--ink-2)}.pct.bad{color:var(--danger)}
 .stbar{display:flex;gap:6px;flex-wrap:wrap}
@@ -223,9 +226,10 @@ button.pill{cursor:pointer}button.pill:hover{filter:brightness(.97)}
 /* print */
 #print{display:none}
 @media print{body>*:not(#print){display:none!important}#print{display:block}@page{size:A4;margin:12mm 11mm}}
-body.pv>*:not(#print):not(#pvBar):not(#toast){display:none!important}
+body.pv>*:not(#print):not(#pvBar):not(#toast):not(.html2pdf__overlay){display:none!important}
+.html2pdf__container #print{display:block!important;padding:0!important;margin:0!important;max-width:none!important;width:100%}.html2pdf__container #print .oc{overflow:visible!important}.html2pdf__container #print .oc table{min-width:0!important}.html2pdf__container #print .sum{flex-wrap:nowrap!important}.html2pdf__container #print .sum div{min-width:0!important}
 @media screen and (max-width:700px){body.pv #print .oc{overflow-x:auto}body.pv #print .oc table{min-width:620px}body.pv #print .sum{flex-wrap:wrap}body.pv #print .sum div{min-width:28%}}
-body.pv{background:#fff}body.pv #print{display:block;padding:calc(64px + env(safe-area-inset-top)) 12px 24px;max-width:820px;margin:0 auto}
+body.pv{background:#fff}#print.pdfing .sum{flex-wrap:nowrap!important}#print.pdfing .sum div{min-width:0!important}#print.pdfing .oc{overflow:visible!important}#print.pdfing .oc table{min-width:0!important}#print.pdfbox{display:block!important;padding:0;color:#1e1a22;background:#fff}body.pv #print{display:block;padding:calc(64px + env(safe-area-inset-top)) 12px 24px;max-width:820px;margin:0 auto}
 #pvBar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;gap:8px;align-items:center;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;background:color-mix(in srgb,#fff 90%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid #e2dee5}#pvBar .sp{flex:1}
 @media print{#pvBar{display:none!important}body.pv #print{padding:0}}
 #print{color:#1e1a22;font:10pt/1.45 "IBM Plex Sans Arabic","SF Arabic",Tahoma,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -262,7 +266,12 @@ body.pv{background:#fff}body.pv #print{display:block;padding:calc(64px + env(saf
 #print h2.cl{font-size:12pt;font-weight:700;margin:14px 0 6px;padding:5px 10px;border-right:4px solid #1e1a22;background:#f3f1f4;display:flex;gap:10px;align-items:baseline;break-after:avoid}#print h2.cl span{font-size:8.5pt;font-weight:400;color:#5d5664}
 #print .oh .q{font-weight:700}#print .om{font-size:8.5pt;color:#5d5664;padding:3px 10px 4px;border-bottom:1px solid #e2dee5}#print .om b{color:#000}
 #print .vd{font-size:9pt;font-weight:700;padding:2px 9px;border-radius:6px;border:1.5px solid #8e8795;white-space:nowrap}#print .vd.ok{border:2px solid #000;background:#fff;color:#000}#print .vd.no{border:1.5px dashed #000;color:#000}
-#print .tag.miss{background:#1e1a22!important;color:#fff!important}#print .tag.part{background:#fff!important;color:#000!important;border:1.5px solid #000}
+#print .tag.miss{background:#1e1a22!important;color:#fff!important}#print .tag.part{background:linear-gradient(90deg,#fff 50%,#d9d4dd 50%)!important;color:#000!important;border:1.5px solid #000}
+#print table.ct{table-layout:auto}#print table.ct td.item{min-width:150px}#print table.ct td.n{white-space:nowrap}#print table.ct th.w1{width:11%}#print table.ct th.w2{width:15%}#print table.ct th.w3{width:22%}#print td.item{font-weight:600}#print tr.ok td.item{font-weight:400}#print td.nt{font-size:8.5pt;color:#3a3540}
+#print tr.pt td{background:#fff}#print tr.pt td:first-child{box-shadow:inset -3px 0 0 #000}#print tr.pt td.item{font-weight:700}
+#print .kv{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:0 0 12px}#print .kv div{border:1px solid #e2dee5;border-radius:8px;padding:6px 10px}#print .kv small{display:block;font-size:8pt;color:#5d5664}#print .kv b{font-size:11pt}
+#print .oc.big{font-size:10.5pt}#print .oc.big td,#print .oc.big th{padding:6px 8px}#print .oc.big .oh .pr{font-size:12pt}
+#print .sig{display:flex;justify-content:space-between;margin-top:34px;font-size:10pt;color:#3a3540}
 #print table.cg{border:0;margin:0}#print table.cg>thead>tr>th,#print table.cg>tbody>tr>td{padding:0;border:0;background:none}#print table.cg>tbody>tr{break-inside:avoid}#print table.cg>thead{display:table-header-group}#print .tag.ok{background:#fff!important;color:#5d5664!important;border:1px solid #8e8795;font-weight:600}
 #print tr.miss td{background:#fff}#print tr.miss td:first-child{box-shadow:inset -3px 0 0 #1e1a22}#print tr.ok td{color:#6d6674}#print tr.ok td:first-child{box-shadow:none}
 #print td small{font-size:7.5pt;color:#8e8795;font-weight:400;margin-inline-start:6px}#print td.n small{display:block;margin:0}#print td.ol{font-size:8.5pt;line-height:1.45;padding-top:2px;padding-bottom:2px}#print td.ol .li{display:flex;gap:8px;justify-content:space-between;border-bottom:1px dotted #d8d3dc;padding:2px 0}#print td.ol .li:last-child{border-bottom:0}#print td.ol .li .n{white-space:nowrap;font-weight:600}#print .bx{width:22px;text-align:center;font-size:11pt;padding-left:2px;padding-right:2px}
@@ -337,7 +346,7 @@ body.pv{background:#fff}body.pv #print{display:block;padding:calc(64px + env(saf
 </section>
 <div class="toast" id="toast" role="status"><span id="tMsg"></span><button id="tUndo" class="hide">تراجع</button></div>
 <input type="file" id="fileIn" accept=".json,application/json" class="hide"><input type="file" id="attIn" class="hide" multiple><div class="attv hide" id="attV" role="dialog" aria-modal="true"><div class="bar"><b id="attT"></b><button class="btn soft" id="attAdd">ضيف صورة / ملف</button><button class="btn line" id="attX">قفل</button></div><div class="body" id="attB"></div></div>
-<div id="pvBar" class="hide"><button class="btn line" id="pvX">قفل</button><span class="sp"></span><button class="btn soft" id="pvShare">شارك / احفظ</button><button class="btn" id="pvPrint">اطبع</button></div>
+<div id="pvBar" class="hide"><button class="btn line" id="pvX">قفل</button><span class="sp"></span><button class="btn soft hide" id="pvShare">شارك / احفظ</button><button class="btn hide" id="pvPrint">اطبع</button><button class="btn" id="pvPdf">تحميل PDF</button></div>
 <div id="print"></div>
 
 <script>
@@ -489,7 +498,7 @@ function render(){
   const V = $('view'), key = CUR + FIL + PREPBY, anim = key !== ANIM; ANIM = key;
   V.innerHTML = ({ home:vHome, orders:vOrders, prep:vPrep, ready:vReady, clients:vClients, settings:vSettings }[CUR] || vHome)();
   if (anim) V.querySelectorAll('.anim').forEach(x => { x.classList.remove('enter'); void x.offsetWidth; x.classList.add('enter'); });
-  bindView();
+  bindView(); if (CUR === 'prep') paintThumbs($('view'));
 }
 const pill = (o, btn) => `<${btn ? 'button' : 'span'} class="pill s-${STATUS[o.status] ? o.status : 'open'}" ${btn ? `data-adv="${esc(o.oc)}" title="الخطوة الجاية"` : ''}>${STATUS[o.status]}</${btn ? 'button' : 'span'}>`;
 function rb(o){ const [r, n] = readyCount(o); if (!n) return '<span class="rb">من غير مكونات</span>'; const k = Math.min(n, 8);
@@ -540,21 +549,23 @@ function vOrders(){
   ${LIST.length ? listBox(LIST.slice(0, LIMIT).map(rowHTML).join('')) + (LIST.length > LIMIT ? `<div style="text-align:center;margin-top:12px"><button class="btn soft" data-act="more">اعرض ${Math.min(150, LIST.length - LIMIT)} كمان</button></div>` : '')
    : q ? emptyBox('search', `ملقيناش «${esc(q)}»`, 'جرّب الكود أو اسم تاني.') : emptyBox('orders', 'مفيش حاجة بالفلتر ده', '', `<button class="btn soft" data-f="all">امسح الفلتر</button>`)}`;
 }
-function prepItems(){ const out = []; for (const o of ord().filter(isOpen)) (o.comps || []).forEach((c, i) => { if (!c.ready) out.push({ o, c, i }); }); return out; }
+function prepItems(useQ){ const out = [], q = useQ ? norm($('q').value) : '', toks = q ? q.split(' ') : [];
+  for (const o of ord().filter(isOpen)) (o.comps || []).forEach((c, i) => { if (c.ready) return; if (toks.length) { const h = norm([o.oc, cname(o.clientId), o.lines?.[0]?.product, c.name, CK[c.k]?.[0], c.note].join(' ')); if (!toks.every(t => h.includes(t))) return; } out.push({ o, c, i }); }); return out; }
 const prepTotal = () => prepItems().length;
 function vPrep(){
-  const it = prepItems();
+  const it = prepItems(true), qv = $('q').value.trim();
   const seg = `<div class="tools"><div class="chips"><button class="chip" data-by="comp" aria-pressed="${PREPBY === 'comp'}">حسب المكوّن</button><button class="chip" data-by="client" aria-pressed="${PREPBY === 'client'}">حسب العميل</button></div><span class="sp"></span><button class="btn line" data-act="printprep">${ic('print')}طباعة</button></div>`;
-  if (!it.length) return seg + emptyBox('ready', 'كل المكوّنات جاهزة، مفيش نواقص النهارده', '');
+  if (!it.length) return seg + (qv ? emptyBox('search', `ملقيناش نواقص لـ «${esc(qv)}»`, 'جرّب اسم العميل أو المنتج أو المكوّن.') : emptyBox('ready', 'كل المكوّنات جاهزة، مفيش نواقص النهارده', ''));
   const G = new Map();
   for (const x of it){ const k = PREPBY === 'comp' ? (CK[x.c.k]?.[0] || x.c.k) : cname(x.o.clientId); if (!G.has(k)) G.set(k, []); G.get(k).push(x); }
   return seg + `<div class="panel anim">${[...G].sort((a, b) => b[1].length - a[1].length).map(([k, L], gi) => {
     const pcs = L.filter(x => x.c.unit === 'قطعة').reduce((s, x) => s + (+x.c.qty || 0) * (+x.o.lines?.[0]?.qty || 0), 0);
     return `<details class="grp" ${gi < 3 ? 'open' : ''} style="--i:${gi}"><summary>${PREPBY === 'comp' ? ic(CK[L[0].c.k]?.[1] || 'box') : `<span class="av" style="width:28px;height:28px;font-size:12px">${esc(k.slice(0, 1))}</span>`}<span>${esc(k)}</span><span class="ct num">${L.length} ${PREPBY === 'comp' ? 'أوردر' : 'مكوّن'}${PREPBY === 'comp' && pcs ? ' · ' + fmt(pcs) + ' قطعة' : ''}</span><span class="sp"></span>${PREPBY === 'client' ? `<button class="btn ghost icon" data-printc="${esc(L[0].o.clientId)}" title="طباعة نواقص العميل" aria-label="طباعة">${ic('print')}</button>` : ''}${ic('chev', 'chev')}</summary>
-      ${L.map(x => `<div class="pl"><button class="tick" data-tick="${esc(x.o.oc)}|${x.i}" aria-label="جاهز">${ic('check')}</button><div class="grow"><b>${esc(PREPBY === 'comp' ? cname(x.o.clientId) : (CK[x.c.k]?.[0] || x.c.k))}</b> · ${esc(x.c.name || '')}<small><span class="code">${esc(x.o.oc)}</span> · ${esc(x.o.lines?.[0]?.product || '')} · ${fmt(x.c.qty)} ${esc(x.c.unit || '')}${x.c.unit === 'قطعة' ? ' × ' + fmt(x.o.lines?.[0]?.qty) + ' = ' + fmt((+x.c.qty || 0) * (+x.o.lines?.[0]?.qty || 0)) : ''}${x.c.note ? ' · ' + esc(x.c.note) : ''}${isPart(x.c, x.o) ? `<b style="color:var(--amber);display:block">◐ وصل ${fmt(gotN(x.c))} · باقي ${fmt(need(x.c, x.o) - gotN(x.c))}</b>` : ''}</small></div>${(x.c.att || []).length ? `<button class="ca has" data-patt="${esc(x.o.oc)}|${x.i}" aria-label="الصور والملفات">${ic('clip')}<b>${x.c.att.length}</b></button>` : ''}${need(x.c, x.o) != null ? `<button class="btn line" data-part="${esc(x.o.oc)}|${x.i}" style="min-height:34px;padding:0 10px">جزئي</button>` : ''}<button class="btn ghost icon" data-open="${esc(x.o.oc)}" aria-label="افتح الأوردر">${ic('chev')}</button></div>`).join('')}</details>`; }).join('')}</div>`;
+      ${L.map(x => `<div class="pl"><button class="tick" data-tick="${esc(x.o.oc)}|${x.i}" aria-label="جاهز">${ic('check')}</button><div class="grow"><b>${esc(PREPBY === 'comp' ? cname(x.o.clientId) : (CK[x.c.k]?.[0] || x.c.k))}</b> · ${esc(x.c.name || '')}<small><span class="code">${esc(x.o.oc)}</span> · ${esc(x.o.lines?.[0]?.product || '')} · ${fmt(x.c.qty)} ${esc(x.c.unit || '')}${x.c.unit === 'قطعة' ? ' × ' + fmt(x.o.lines?.[0]?.qty) + ' = ' + fmt((+x.c.qty || 0) * (+x.o.lines?.[0]?.qty || 0)) : ''}${x.c.note ? ' · ' + esc(x.c.note) : ''}${isPart(x.c, x.o) ? `<b style="color:var(--amber);display:block">وصل ${fmt(gotN(x.c))} · باقي ${fmt(need(x.c, x.o) - gotN(x.c))}</b>` : ''}</small></div><div class="pa">${(x.c.att || []).length ? `<button class="ths" data-patt="${esc(x.o.oc)}|${x.i}" aria-label="الصور والملفات">${x.c.att.slice(0, 3).map(a => /^image\//.test(a.type || '') ? `<i class="th" data-thumb="${esc(a.id)}"></i>` : `<i class="th f">${ic('clip')}</i>`).join('')}${x.c.att.length > 3 ? `<b>+${x.c.att.length - 3}</b>` : ''}</button>` : ''}${need(x.c, x.o) != null ? `<button class="btn line" data-part="${esc(x.o.oc)}|${x.i}" style="min-height:34px;padding:0 10px">جزئي</button>` : ''}<button class="btn ghost icon" data-open="${esc(x.o.oc)}" aria-label="افتح الأوردر">${ic('chev')}</button></div></div>`).join('')}</details>`; }).join('')}</div>`;
 }
 function vReady(){
-  const R = ord().filter(o => o.status === 'ready'), N = ord().filter(o => o.status === 'delivered' && !o.invoiceNo).sort((a, b) => (b.deliveredAt || '').localeCompare(a.deliveredAt || ''));
+  const qq = norm($('q').value), mt = o => !qq || qq.split(' ').every(t => norm([o.oc, cname(o.clientId), o.lines?.[0]?.product, o.invoiceNo].join(' ')).includes(t));
+  const R = ord().filter(o => o.status === 'ready' && mt(o)), N = ord().filter(o => o.status === 'delivered' && !o.invoiceNo && mt(o)).sort((a, b) => (b.deliveredAt || '').localeCompare(a.deliveredAt || ''));
   const r = o => `<div class="row" data-oc="${esc(o.oc)}" style="grid-template-columns:100px 1.2fr 1.6fr auto"><span class="code">${esc(o.oc)}</span><span class="cl">${esc(cname(o.clientId))}</span><span class="pr">${esc(o.lines?.[0]?.product || '')} · ${fmt(o.lines?.[0]?.qty)}</span>
      ${o.status === 'ready' ? `<button class="btn soft" data-deliver="${esc(o.oc)}">${ic('truck')}اتسلّم</button>` : `<span class="inline-inv" data-stop><input class="in num" placeholder="رقم فاتورة دفترة" data-invin="${esc(o.oc)}" aria-label="رقم الفاتورة"><button class="btn soft" data-inv="${esc(o.oc)}">${ic('inv')}فوتر</button></span>`}</div>`;
   return `<div class="sec-h"><h2>جاهز للتسليم</h2><small class="num">${R.length}</small></div>${R.length ? `<div class="panel anim">${R.map(r).join('')}</div>` : emptyBox('ready', 'مفيش أوردرات جاهزة', '')}
@@ -608,7 +619,7 @@ function bindView(){
   };
   V.onkeydown = e => { const rw = e.target.closest('.row[data-oc]'); if (rw && e.target === rw && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); return openOrder(rw.dataset.oc); } const inp = e.target.closest('[data-invin]'); if (inp && e.key === 'Enter') { e.preventDefault(); invoice(inp.dataset.invin, inp.value.trim()); } };
 }
-$('q').addEventListener('input', () => { clearTimeout(render.t); render.t = setTimeout(() => { if (CUR !== 'orders' && CUR !== 'clients' && $('q').value.trim()) CUR = 'orders'; LIMIT = 150; KF = -1; render(); }, 90); });
+$('q').addEventListener('input', () => { clearTimeout(render.t); render.t = setTimeout(() => { if (!['orders','clients','prep','ready'].includes(CUR) && $('q').value.trim()) CUR = 'orders'; LIMIT = 150; KF = -1; render(); }, 90); });
 
 /* ================= actions ================= */
 async function partArrive(oc, i){ const o = S.orders[oc]; if (!o) return; const c = o.comps[i], n = need(c, o);
@@ -655,6 +666,7 @@ async function attPaint(){ const c = ATT.c, B = $('attB'); ATTURLS.forEach(URL.r
     if (r && /^image\//.test(r.type)) { const u = URL.createObjectURL(r.blob); ATTURLS.push(u); box.innerHTML = `<img src="${u}" alt="${esc(a.name)}">`; }
     box.insertAdjacentHTML('beforeend', `<div class="fi"><span style="word-break:break-all">${esc(a.name)}</span><span class="sp"></span>${r ? `<button class="btn line" data-aopen="${i}">فتح</button>` : '<small>مش متاح دلوقتي — محتاج نت</small>'}<button class="btn danger" data-adel="${i}">شيل</button></div>`);
     B.appendChild(box); } }
+async function paintThumbs(root){ for (const t of (root || document).querySelectorAll('[data-thumb]:not([data-ok])')) { t.dataset.ok = 1; const r = await attGet(t.dataset.thumb); if (r && /^image\//.test(r.type)) { const u = URL.createObjectURL(r.blob); t.style.backgroundImage = `url(${u})`; } else t.classList.add('f'); } }
 function attClose(){ $('attV').classList.add('hide'); ATTURLS.forEach(URL.revokeObjectURL); ATTURLS = []; ATT = null; }
 $('attX').onclick = attClose;
 $('attAdd').onclick = () => $('attIn').click();
@@ -876,40 +888,70 @@ $('pvPrint').onclick = async () => {
   if (!STANDALONE()) { try { print(); } catch (e) { toast('استخدم «شارك / احفظ»'); } return; }
   const { doc } = pvDoc(), url = location.origin + location.pathname + '#pv=' + await packDoc(doc);
   const w = window.open(url, '_blank'); if (!w) toast('ماقدرتش أفتح صفحة الطباعة — استخدم «شارك / احفظ»'); };
+/* iPhone: real PDF file — the browser draws the report itself (html-to-image, MIT) so Arabic stays perfect; jsPDF (MIT) builds the pages. Loaded only when needed. */
+const JS = {}; const loadJS = src => JS[src] || (JS[src] = new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = () => { delete JS[src]; no(new Error('محتاج نت أول مرة')); }; document.head.appendChild(sc); }));
+async function reportPDF(el){
+  await Promise.all([loadJS('https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js'), loadJS('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')]);
+  const W = 780, keep = el.getAttribute('style') || ''; el.style.cssText = 'display:block;width:' + W + 'px;max-width:none;margin:0;padding:0;background:#fff'; el.classList.add('pdfing');
+  try {
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const top = el.getBoundingClientRect().top, H = el.scrollHeight, cuts = new Set([H]);
+    el.querySelectorAll('.oc,tr,h2,.sum,.kv,.sig,.rh,.note,table.cg').forEach(x => { const y = Math.round(x.getBoundingClientRect().top - top); if (y > 0 && y < H) cuts.add(y); });
+    const PR = 2, canvas = await window.htmlToImage.toCanvas(el, { pixelRatio:PR, backgroundColor:'#ffffff', width:W, height:H, cacheBust:false });
+    const { jsPDF } = window.jspdf, pdf = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' }), mx = 8, my = 10, cw = 210 - 2 * mx, ch = 297 - 2 * my - 4, pageH = Math.floor(ch / cw * W);
+    const list = [...cuts].sort((a, b) => a - b), pages = []; let y0 = 0;
+    while (y0 < H - 2) { let y1 = Math.min(H, y0 + pageH); if (y1 < H) { const ok = list.filter(c => c > y0 + pageH * 0.35 && c <= y1); if (ok.length) y1 = ok[ok.length - 1]; } pages.push([y0, y1]); y0 = y1; }
+    pages.forEach(([a, b], n) => { const c = document.createElement('canvas'); c.width = W * PR; c.height = (b - a) * PR; const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(canvas, 0, a * PR, W * PR, (b - a) * PR, 0, 0, W * PR, (b - a) * PR);
+      if (n) pdf.addPage(); pdf.addImage(c.toDataURL('image/jpeg', 0.9), 'JPEG', mx, my, cw, (b - a) / W * cw); pdf.setFontSize(8); pdf.setTextColor(120); pdf.text(`${n + 1} / ${pages.length}`, 105, 292, { align:'center' }); });
+    return pdf.output('blob');
+  } finally { el.setAttribute('style', keep); el.classList.remove('pdfing'); }
+}
+$('pvPdf').onclick = async () => { const b = $('pvPdf'); if (b.disabled) return; b.disabled = true; const t0 = b.textContent; b.textContent = 'بيجهّز…';
+  try { const title = ($('print').querySelector('h1')?.textContent || 'تقرير').trim(), name = (title + ' ' + today()).replace(/[\\/:*?"<>|]/g, '-') + '.pdf';
+    const blob = await reportPDF($('print')), f = new File([blob], name, { type:'application/pdf' });
+    try { if (navigator.canShare && navigator.canShare({ files:[f] })) { await navigator.share({ files:[f], title }); return; } } catch (e) { if (e.name === 'AbortError') return; }
+    const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 8000);
+  } catch (e) { toast('ماقدرتش أعمل PDF: ' + e.message); console.error(e); } finally { b.disabled = false; b.textContent = t0; } };
 $('pvShare').onclick = async () => { const { title, doc } = pvDoc();
   const f = new File([doc], title.replace(/[\\/:*?"<>|]/g, '-') + '.html', { type:'text/html' });
   try { if (navigator.canShare && navigator.canShare({ files:[f] })) { await navigator.share({ files:[f], title }); return; } } catch (e) { if (e.name === 'AbortError') return; }
   download(f.name, doc, 'text/html'); };
 const phead = t => `<div class="rh"><span class="mk">ن</span><div><h1>${esc(t)}</h1><div class="sub">نور الخليج للعطور</div></div><span class="sp"></span><div class="dt">${tm(nowISO())}</div></div>`;
-function printOrder(o){ const l = o.lines[0] || {}; doPrint(phead(l.product + (l.size ? ' ' + l.size : '') + ' — ' + cname(o.clientId)) + `<table><tr><th>العميل</th><td>${esc(cname(o.clientId))}</td><th>الحالة</th><td>${STATUS[o.status]}</td></tr><tr><th>المنتج</th><td>${esc(l.product)} ${esc(l.size || '')}</td><th>الكمية</th><td>${fmt(l.qty)}</td></tr><tr><th>تاريخ الأوردر</th><td>${dmy(o.createdAt)}</td><th>ميعاد التسليم</th><td>${dmy(o.dueDate) || '—'}</td></tr></table>
-  <table><tr><th>#</th><th>المكوّن</th><th>الصنف</th><th>للقطعة</th><th>المطلوب</th><th>جاهز</th><th>ملاحظة</th></tr>${(o.comps || []).map((c, i) => `<tr><td>${i + 1}</td><td>${esc(CK[c.k]?.[0] || c.k)}</td><td>${esc(c.name)}</td><td>${fmt(c.qty)} ${esc(c.unit)}</td><td>${c.unit === 'قطعة' ? fmt(c.qty * l.qty) : ''}</td><td>${c.ready ? '✓' : '☐'}</td><td>${esc(c.note)}</td></tr>`).join('')}</table>${o.notes ? `<p><b>ملاحظات:</b> ${esc(o.notes)}</p>` : ''}<p style="margin-top:30pt">التوقيع: ____________________</p>`); }
+function printOrder(o){ const l = o.lines[0] || {};
+  doPrint(phead(l.product + (l.size ? ' ' + l.size : '')) + `<div class="kv"><div><small>العميل</small><b>${esc(cname(o.clientId))}</b></div><div><small>الكمية</small><b>${fmt(l.qty)}</b></div><div><small>تاريخ الأوردر</small><b>${dmy(o.createdAt)}</b></div><div><small>ميعاد التسليم</small><b>${o.dueDate ? dmy(o.dueDate) : 'بدون موعد'}</b></div><div><small>الحالة</small><b>${STATUS[o.status]}</b></div></div>
+  <div class="oc big"><div class="oh"><span class="pr">المكوّنات</span><span class="meta">${orderMeta(o).replace(/^اتعمل [^·]+· [^·]+· /, '')}</span><span class="sp"></span>${verdictHTML(o)}</div>${compTable(o)}${o.notes ? `<div class="note"><b>ملاحظات:</b> ${esc(o.notes)}</div>` : ''}</div>
+  <div class="sig"><div>استلم / جهّز: ____________________</div><div>التاريخ: ____ / ____ / ________</div></div>`); }
 /* full report: every active order per client, each component with its state (واصل / ناقص) */
+const qtyTxt = c => c.qty === '' || c.qty == null ? '—' : fmt(c.qty) + ' ' + esc(c.unit);
+const cname2 = c => CK[c.k]?.[0] || c.k;
+const missOf = o => (o.comps || []).filter(c => !c.ready);
+function verdictHTML(o){ const m = missOf(o), n = (o.comps || []).length; if (!n) return '<span class="vd">من غير مكوّنات</span>';
+  if (!m.length) return '<span class="vd ok">✓ جاهز للتعبئة</span>';
+  return `<span class="vd no">✗ واقف على: ${esc([...new Set(m.map(c => cLabel(c) + (isPart(c, o) ? ` (باقي ${fmt(need(c, o) - gotN(c))})` : '')))].join('، '))}</span>`; }
+function compTable(o, missOnly){
+  const rows = (o.comps || []).map((c, i) => ({ c, i })).filter(x => !missOnly || !x.c.ready).sort((a, b) => a.c.ready - b.c.ready || isPart(b.c, o) - isPart(a.c, o) || a.i - b.i);
+  if (!rows.length) return '<div class="note">كل المكوّنات واصلة ✓</div>';
+  const hasDate = !missOnly && rows.some(x => x.c.ready), hasNote = rows.some(x => x.c.note), hasPart = rows.some(x => isPart(x.c, o));
+  return `<table class="ct"><thead><tr><th class="bx"></th><th>الصنف</th><th class="w1">للقطعة</th><th class="w1">المطلوب</th>${hasPart ? '<th class="w1">وصل</th><th class="w1">باقي</th>' : ''}<th class="w2">الحالة</th>${hasDate ? '<th class="w1">تاريخ الوصول</th>' : ''}${hasNote ? '<th class="w3">ملاحظة</th>' : ''}</tr></thead><tbody>${rows.map(({ c }) => { const r = need(c, o), pt = isPart(c, o);
+    return `<tr class="${c.ready ? 'ok' : pt ? 'pt' : 'miss'}"><td class="bx">${c.ready ? '' : '☐'}</td><td class="item">${esc(cLabel(c))}${c.name && cname2(c) !== 'مكوّن' && norm(c.name).indexOf(norm(cname2(c))) !== 0 ? `<small>${esc(cname2(c))}</small>` : ''}</td><td class="n">${qtyTxt(c)}</td><td class="n">${r != null ? fmt(r) : '—'}</td>${hasPart ? `<td class="n">${gotN(c) && !c.ready ? fmt(gotN(c)) : ''}</td><td class="n"><b>${pt ? fmt(r - gotN(c)) : ''}</b></td>` : ''}<td>${c.ready ? '<span class="tag ok">✓ واصل</span>' : pt ? '<span class="tag part">جزئي</span>' : '<span class="tag miss">✗ ناقص</span>'}</td>${hasDate ? `<td class="n">${c.ready ? dmy(c.readyAt) : ''}</td>` : ''}${hasNote ? `<td class="nt">${esc(c.note)}</td>` : ''}</tr>`; }).join('')}</tbody></table>`; }
+function orderMeta(o){ const m = missOf(o), n = (o.comps || []).length, d = dueInfo(o), pc = (o.comps || []).filter(c => isPart(c, o)).length;
+  return `اتعمل ${dmy(o.createdAt)} · ${o.dueDate ? `التسليم ${dmy(o.dueDate)}${d && d.d < 0 ? ` <b>(${d.txt})</b>` : ''}` : 'بدون موعد تسليم'} · <b>${n - m.length}/${n}</b> واصل${pc ? ` · <b>${pc}</b> وصل منه جزء` : ''}`; }
+function orderCard(o, missOnly){ const l = o.lines[0] || {};
+  return `<div class="oc"><div class="oh"><span class="pr" style="font-size:11pt">${esc(l.product)}${l.size ? ' · ' + esc(l.size) : ''} <b class="q">× ${fmt(l.qty)}</b></span><span class="sp"></span>${verdictHTML(o)}</div>
+    <div class="om">${orderMeta(o)}</div>${compTable(o, missOnly)}${o.notes ? `<div class="note">ملاحظات: ${esc(o.notes)}</div>` : ''}</div>`; }
 function printFull(onlyId, missOnly){
   const L = ord().filter(o => isOpen(o) && (!onlyId || o.clientId === onlyId)), G = new Map();
   for (const o of L) { if (!G.has(o.clientId)) G.set(o.clientId, []); G.get(o.clientId).push(o); }
   const groups = [...G].sort((a, b) => cname(a[0]).localeCompare(cname(b[0]), 'ar'));
-  const miss = o => (o.comps || []).filter(c => !c.ready), cname2 = c => CK[c.k]?.[0] || c.k;
-  const fill = L.filter(o => (o.comps || []).length && !miss(o).length), blocked = L.length - fill.length, lines = L.reduce((n, o) => n + miss(o).length, 0);
-  const req = (c, o) => c.unit === 'قطعة' && c.qty !== '' ? (+c.qty || 0) * (+o.lines[0]?.qty || 0) : null;
-  const qtyTxt = c => c.qty === '' || c.qty == null ? '—' : fmt(c.qty) + ' ' + esc(c.unit);
-  /* 1) shopping / chasing list: one line per missing item across all orders */
+  const fill = L.filter(o => (o.comps || []).length && !missOf(o).length), blocked = L.length - fill.length, lines = L.reduce((n, o) => n + missOf(o).length, 0);
   const B = new Map();
-  for (const o of L) for (const c of miss(o)) { const key = c.k + '|' + norm(c.name) + '|' + c.unit; if (!B.has(key)) B.set(key, { c, pcs:0, other:[], orders:[] }); const x = B.get(key), r = req(c, o);
+  for (const o of L) for (const c of missOf(o)) { const key = c.k + '|' + norm(c.name) + '|' + c.unit; if (!B.has(key)) B.set(key, { c, pcs:0, other:[], orders:[] }); const x = B.get(key), r = need(c, o);
     if (r != null) { x.pcs += r - gotN(c); if (gotN(c)) x.part = true; } else x.other.push(qtyTxt(c)); x.orders.push({ o, c, rem: r != null ? r - gotN(c) : null }); }
-  const buy = [...B.values()].sort((a, b) => b.orders.length - a.orders.length || cname2(a.c).localeCompare(cname2(b.c), 'ar'));
-  const buyTbl = buy.length ? `<h2 class="sh">قايمة النواقص المجمّعة — للشراء والمتابعة <span>${buy.length} صنف</span></h2><table class="bt"><thead><tr><th class="bx"></th><th style="width:30%">الصنف</th><th style="width:20%">المطلوب</th><th>مستنياه (العميل · العطر · الكمية)</th></tr></thead><tbody>${buy.map(x => `<tr><td class="bx">☐</td><td><b>${esc(x.c.name || cname2(x.c))}</b><small>${esc(cname2(x.c))}</small></td><td class="n"><b>${x.pcs ? fmt(x.pcs) + ' قطعة' : ''}</b>${x.part ? '<small>بعد خصم اللي وصل جزئي</small>' : ''}${x.other.length ? `<small>${[...new Set(x.other)].join(' / ')} للقطعة</small>` : ''}</td><td class="ol">${x.orders.map(y => `<div class="li"><span>${esc(cname(y.o.clientId))} · <b>${esc(y.o.lines[0]?.product || '')}</b></span><span class="n">${y.rem != null ? fmt(y.rem) + (gotN(y.c) ? ' (باقي)' : '') : qtyTxt(y.c)}</span></div>`).join('')}</td></tr>`).join('')}</tbody></table>` : '';
+  const buy = [...B.values()].sort((a, b) => b.orders.length - a.orders.length || cLabel(a.c).localeCompare(cLabel(b.c), 'ar'));
+  const buyTbl = buy.length ? `<h2 class="sh">قايمة النواقص المجمّعة — للشراء والمتابعة <span>${buy.length} صنف</span></h2><table class="bt"><thead><tr><th class="bx"></th><th style="width:28%">الصنف</th><th style="width:18%">المطلوب</th><th>مستنياه (العميل · العطر · الكمية)</th></tr></thead><tbody>${buy.map(x => `<tr><td class="bx">☐</td><td class="item">${esc(cLabel(x.c))}</td><td class="n"><b>${x.pcs ? fmt(x.pcs) + ' قطعة' : ''}</b>${x.part ? '<small>الباقي بعد اللي وصل</small>' : ''}${x.other.length ? `<small>${[...new Set(x.other)].join(' / ')} للقطعة</small>` : ''}</td><td class="ol">${x.orders.map(y => `<div class="li"><span>${esc(cname(y.o.clientId))} · <b>${esc(y.o.lines[0]?.product || '')}</b></span><span class="n">${y.rem != null ? fmt(y.rem) + (gotN(y.c) ? ` <small style="display:inline">(وصل ${fmt(gotN(y.c))})</small>` : '') : qtyTxt(y.c)}</span></div>`).join('')}</td></tr>`).join('')}</tbody></table>` : '';
   const sum = `<div class="sum"><div class="g"><small>✓ جاهز للتعبئة</small><b>${fill.length}</b></div><div class="r"><small>✗ واقف على نواقص</small><b>${blocked}</b></div><div><small>سطور ناقصة</small><b>${lines}</b></div>${onlyId ? '' : `<div><small>العملاء</small><b>${groups.length}</b></div>`}</div>`;
-  /* 2) per client → order cards */
-  const body = groups.map(([cid, os]) => `<table class="cg"><thead><tr><th><h2 class="cl">${esc(cname(cid))}<span>${os.length} أوردر · ${os.filter(o => fill.includes(o)).length} جاهز للتعبئة</span></h2></th></tr></thead><tbody>` + os.sort((a, b) => (fill.includes(b) - fill.includes(a)) || a.createdAt.localeCompare(b.createdAt)).map(o => {
-      const l = o.lines[0] || {}, m = miss(o), n = (o.comps || []).length, d = dueInfo(o);
-      const rows = (o.comps || []).map((c, i) => ({ c, i })).filter(x => !missOnly || !x.c.ready).sort((a, b) => a.c.ready - b.c.ready || a.i - b.i);
-      const hasDate = !missOnly && rows.some(x => x.c.ready), hasNote = rows.some(x => x.c.note);
-      const verdict = !n ? '<span class="vd">من غير مكوّنات</span>' : m.length ? `<span class="vd no">✗ واقف على: ${esc([...new Set(m.map(cname2))].join('، '))}</span>` : '<span class="vd ok">✓ جاهز للتعبئة</span>';
-      return `<div class="oc"><div class="oh"><span class="pr" style="font-size:11pt">${esc(l.product)}${l.size ? ' · ' + esc(l.size) : ''} <b class="q">× ${fmt(l.qty)}</b></span><span class="sp"></span>${verdict}</div>
-      <div class="om">اتعمل ${dmy(o.createdAt)} · ${o.dueDate ? `التسليم ${dmy(o.dueDate)}${d && d.d < 0 ? ` <b>(${d.txt})</b>` : ''}` : 'بدون موعد تسليم'} · ${n - m.length}/${n} واصل</div>
-      ${rows.length ? `<table><thead><tr><th class="bx"></th><th style="width:34%">الصنف</th><th style="width:15%">للقطعة</th><th style="width:13%">المطلوب</th><th style="width:13%">الحالة</th>${hasDate ? '<th style="width:11%">وصل</th>' : ''}${hasNote ? '<th>ملاحظة</th>' : ''}</tr></thead><tbody>${rows.map(({ c }) => `<tr class="${c.ready ? 'ok' : 'miss'}"><td class="bx">${c.ready ? '' : '☐'}</td><td class="item">${esc(c.name || cname2(c))}<small>${esc(cname2(c))}</small></td><td class="n">${qtyTxt(c)}</td><td class="n">${req(c, o) != null ? fmt(req(c, o)) : ''}${isPart(c, o) ? `<small>وصل ${fmt(gotN(c))} · باقي <b style="color:#000">${fmt(req(c, o) - gotN(c))}</b></small>` : ''}</td><td>${c.ready ? '<span class="tag ok">✓ واصل</span>' : isPart(c, o) ? '<span class="tag part">◐ جزئي</span>' : '<span class="tag miss">✗ ناقص</span>'}</td>${hasDate ? `<td class="n">${c.ready ? dmy(c.readyAt) : ''}</td>` : ''}${hasNote ? `<td>${esc(c.note)}</td>` : ''}</tr>`).join('')}</tbody></table>` : '<div class="note">كل المكوّنات واصلة ✓</div>'}${o.notes ? `<div class="note">ملاحظات: ${esc(o.notes)}</div>` : ''}</div>`; }).map(h => `<tr><td>${h}</td></tr>`).join('') + '</tbody></table>').join('');
+  const body = groups.map(([cid, os]) => `<table class="cg"><thead><tr><th><h2 class="cl">${esc(cname(cid))}<span>${os.length} أوردر · ${os.filter(o => fill.includes(o)).length} جاهز للتعبئة</span></h2></th></tr></thead><tbody>` + os.sort((a, b) => (fill.includes(b) - fill.includes(a)) || a.createdAt.localeCompare(b.createdAt)).map(o => `<tr><td>${orderCard(o, missOnly)}</td></tr>`).join('') + '</tbody></table>').join('');
   const title = (missOnly ? 'نواقص ' : 'تفاصيل أوردرات ') + (onlyId ? cname(onlyId) : 'كل العملاء');
-  $('print').dataset.title = title + ' · ' + dmy(nowISO());
   doPrint(phead(title) + sum + buyTbl + (missOnly ? '' : '<h2 class="sh">تفاصيل كل أوردر</h2>') + (body || '<p>مفيش أوردرات شغالة</p>'));
 }
 function printClient(id){ const L = ord().filter(o => o.clientId === id && isOpen(o));
