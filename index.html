@@ -159,10 +159,12 @@ button.pill{cursor:pointer}button.pill:hover{filter:brightness(.97)}
 .fsec{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
 .fsec h4{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .fsec h4 .sp{flex:1}
-.comp{display:grid;grid-template-columns:34px 104px 1fr 68px 84px 30px;gap:8px;align-items:center;margin-bottom:8px}
+.comp{display:grid;grid-template-columns:34px 1fr 68px 84px 34px 30px;gap:8px;align-items:center;margin-bottom:8px}
 .comp .in{min-height:38px;padding:6px 10px;font-size:14px}
 .comp .x{width:30px;height:30px;border-radius:8px;color:var(--ink-3);display:grid;place-items:center}.comp .x:hover{background:var(--danger-soft);color:var(--danger)}
 .comp .note{grid-column:2/-1;margin-top:-4px}
+.ca{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--ink-3);border:1px dashed var(--line);position:relative}.ca.has{color:var(--plum);border:1px solid var(--plum);background:var(--plum-soft)}.ca b{position:absolute;top:-6px;inset-inline-end:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--plum);color:var(--on-plum);font-size:10px;display:grid;place-items:center}
+.attv{position:fixed;inset:0;z-index:60;background:rgb(18 16 20/.92);display:flex;flex-direction:column}.attv .bar{display:flex;gap:8px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;color:#fff}.attv .bar b{flex:1;font-weight:600}.attv .body{flex:1;overflow:auto;padding:10px 14px calc(16px + env(safe-area-inset-bottom));display:grid;gap:12px;align-content:start}.attv img{max-width:100%;border-radius:10px;background:#fff;justify-self:center}.attv .fi{background:#fff;color:#1e1a22;border-radius:10px;padding:12px;display:flex;gap:10px;align-items:center}.attv .fi .sp{flex:1}
 .pct{font-size:12.5px;margin-top:6px;color:var(--ink-2)}.pct.bad{color:var(--danger)}
 .stbar{display:flex;gap:6px;flex-wrap:wrap}
 .stbar .pill{height:32px;padding:0 12px;font-size:13px;border:1px solid transparent;cursor:pointer;opacity:.55}
@@ -213,8 +215,8 @@ button.pill{cursor:pointer}button.pill:hover{filter:brightness(.97)}
  .sheet::before{content:"";width:36px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0;flex:none}
  .sheet.on{transform:none}
  .fg{grid-template-columns:1fr}
- .comp{grid-template-columns:34px 1fr 70px 30px;grid-template-areas:"t k k x" "t n q u"}
- .comp .tick{grid-area:t}.comp .ck{grid-area:k}.comp .cn{grid-area:n}.comp .cq{grid-area:q}.comp .cu{grid-area:u}.comp .x{grid-area:x}.comp .note{grid-column:2/-1}
+ .comp{grid-template-columns:34px 1fr 1fr 34px 30px;grid-template-areas:"t n n a x" "t q u u ."}
+ .comp .tick{grid-area:t}.comp .ca{grid-area:a}.comp .cn{grid-area:n}.comp .cq{grid-area:q}.comp .cu{grid-area:u}.comp .x{grid-area:x}.comp .note{grid-column:2/-1}
  .in,.comp .in,.inline-inv input,.sf input,select.in{font-size:16px!important}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:0ms!important}.scrim,.toast{transition:opacity 120ms!important}}
@@ -263,7 +265,7 @@ body.pv{background:#fff}body.pv #print{display:block;padding:calc(64px + env(saf
 #print .tag.miss{background:#1e1a22!important;color:#fff!important}#print .tag.part{background:#fff!important;color:#000!important;border:1.5px solid #000}
 #print table.cg{border:0;margin:0}#print table.cg>thead>tr>th,#print table.cg>tbody>tr>td{padding:0;border:0;background:none}#print table.cg>tbody>tr{break-inside:avoid}#print table.cg>thead{display:table-header-group}#print .tag.ok{background:#fff!important;color:#5d5664!important;border:1px solid #8e8795;font-weight:600}
 #print tr.miss td{background:#fff}#print tr.miss td:first-child{box-shadow:inset -3px 0 0 #1e1a22}#print tr.ok td{color:#6d6674}#print tr.ok td:first-child{box-shadow:none}
-#print td small{font-size:7.5pt;color:#8e8795;font-weight:400;margin-inline-start:6px}#print td.n small{display:block;margin:0}#print td.ol{font-size:8pt;line-height:1.5;direction:rtl;word-break:break-word}#print .bx{width:22px;text-align:center;font-size:11pt;padding-left:2px;padding-right:2px}
+#print td small{font-size:7.5pt;color:#8e8795;font-weight:400;margin-inline-start:6px}#print td.n small{display:block;margin:0}#print td.ol{font-size:8.5pt;line-height:1.45;padding-top:2px;padding-bottom:2px}#print td.ol .li{display:flex;gap:8px;justify-content:space-between;border-bottom:1px dotted #d8d3dc;padding:2px 0}#print td.ol .li:last-child{border-bottom:0}#print td.ol .li .n{white-space:nowrap;font-weight:600}#print .bx{width:22px;text-align:center;font-size:11pt;padding-left:2px;padding-right:2px}
 #print td{padding:4px 7px}#print th{padding:4px 7px}#print table thead{display:table-header-group}
 #print table.bt{border:1px solid #cfcad3;border-radius:8px;margin-bottom:6px}#print table.bt td{border-bottom:1px solid #e2dee5}
 #print .sum .g{background:#fff;border:2px solid #000}#print .sum .g b{color:#000}#print .sum .r{background:#fff;border:1.5px dashed #000}#print .sum .r b{color:#000}
@@ -304,6 +306,7 @@ body.pv{background:#fff}body.pv #print{display:block;padding:calc(64px + env(saf
 <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
 <symbol id="i-csv" viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 10h16M10 5v14"/></symbol>
 <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c3.5 4.2 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.5-6.8 6-11z"/><path d="M9.5 15a2.5 2.5 0 0 0 2.5 2.5"/></symbol>
+<symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 11.5 12.2 19.3a5 5 0 0 1-7.1-7.1l8-8a3.4 3.4 0 0 1 4.8 4.8l-8 8a1.7 1.7 0 0 1-2.4-2.4l7.3-7.3"/></symbol>
 <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></symbol>
 </defs></svg>
 
@@ -333,7 +336,7 @@ body.pv{background:#fff}body.pv #print{display:block;padding:calc(64px + env(saf
   <div class="sh-f" id="shFoot"></div>
 </section>
 <div class="toast" id="toast" role="status"><span id="tMsg"></span><button id="tUndo" class="hide">تراجع</button></div>
-<input type="file" id="fileIn" accept=".json,application/json" class="hide">
+<input type="file" id="fileIn" accept=".json,application/json" class="hide"><input type="file" id="attIn" class="hide" multiple><div class="attv hide" id="attV" role="dialog" aria-modal="true"><div class="bar"><b id="attT"></b><button class="btn soft" id="attAdd">ضيف صورة / ملف</button><button class="btn line" id="attX">قفل</button></div><div class="body" id="attB"></div></div>
 <div id="pvBar" class="hide"><button class="btn line" id="pvX">قفل</button><span class="sp"></span><button class="btn soft" id="pvShare">شارك / احفظ</button><button class="btn" id="pvPrint">اطبع</button></div>
 <div id="print"></div>
 
@@ -361,7 +364,10 @@ const fmt = n => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits:
 const days = (a, b) => Math.round((new Date(ymd(b)) - new Date(ymd(a))) / 864e5);
 const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const STATUS = { open:'بيتجهّز', ready:'جاهز', delivered:'اتسلّم', invoiced:'اتفوتر', cancelled:'ملغي' };
-const CK = { bottle:['غرشة','bottle'], cap:['غطا','bottle'], pump:['بمب','bottle'], spray:['بخاخ','bottle'], box:['علبة','box'], sticker:['ستيكر','box'], plate:['بليت','box'], bottomsticker:['ستيكر قاعدة','box'], dye:['صبغة','dye'], alcohol:['كحول','oil'], oil:['زيت','oil'], bacteria:['مادة حافظة','oil'] };
+const CK = { bottle:['غرشة','bottle'], cap:['غطا','bottle'], pump:['بمب','bottle'], spray:['بخاخ','bottle'], box:['علبة','box'], sticker:['ستيكر','box'], plate:['بليت','box'], bottomsticker:['ستيكر قاعدة','box'], dye:['صبغة','dye'], alcohol:['كحول','oil'], oil:['زيت','oil'], bacteria:['مادة حافظة','oil'], other:['مكوّن','box'] };
+const GUESS = [[/غرش|زجاج|ازاز|قزاز|بوتل|bottle/,'bottle'],[/ستيكر ?(قاعد|اسفل|أسفل|تحت)/,'bottomsticker'],[/غطا|غطاء|كاب|cap/,'cap'],[/بمب|pump/,'pump'],[/بخاخ|سبر?اي|spray/,'spray'],[/علب|بوكس|كرتون|box/,'box'],[/ستيكر|ليبل|لاصق|label|sticker/,'sticker'],[/بلي?ت|بلاي?ت|plate/,'plate'],[/صبغ|لون|dye/,'dye'],[/كحول|ايثانول|إيثانول|alcohol/,'alcohol'],[/زيت|oil/,'oil'],[/حافظ|بكتير|bacter/,'bacteria']];
+const guessK = n => { n = norm(n); for (const [r, k] of GUESS) if (r.test(n)) return k; return 'other'; };
+const cLabel = c => c.name || CK[c.k]?.[0] || c.k;
 const UNITS = ['قطعة','%','مل','جرام','كجم'];
 const isOpen = o => o.status === 'open' || o.status === 'ready';
 const need = (c, o) => c.unit === 'قطعة' && c.qty !== '' && c.qty != null ? (+c.qty || 0) * (+o.lines?.[0]?.qty || 0) : null;
@@ -420,7 +426,7 @@ async function takeServer(j){ for (const r of j.renamed || []) { const o = S.ord
   if ((j.renamed || []).length) toast(j.renamed.map(r => `${r.from} بقى ${r.to} (اتعمل على جهازين)`).join(' · ')); }
 async function cloudSync(loud){
   if (!CLOUD) return; if (cloudBusy) { cloudAgain = true; return; } cloudBusy = true; clearTimeout(cloudTimer); setBadge('saving');
-  try { const j = await cloudCall({ action:'save', state:{ seq:S.seq, orders:S.orders, clients:S.clients, deviceId:S.deviceId } }); cloudDirty = false; await kv.set('cloudDirty', false); await takeServer(j); cloudOK(); if (loud) toast('اتحفظ على Drive'); }
+  try { const j = await cloudCall({ action:'save', state:{ seq:S.seq, orders:S.orders, clients:S.clients, deviceId:S.deviceId } }); cloudDirty = false; await kv.set('cloudDirty', false); await takeServer(j); cloudOK(); attUpload(); if (loud) toast('اتحفظ على Drive'); }
   catch (e) { cloudFail(e); if (loud) toast('ماتبعتش: ' + e.message); }
   finally { cloudBusy = false; if (cloudAgain) { cloudAgain = false; cloudSync(); } }
 }
@@ -545,7 +551,7 @@ function vPrep(){
   return seg + `<div class="panel anim">${[...G].sort((a, b) => b[1].length - a[1].length).map(([k, L], gi) => {
     const pcs = L.filter(x => x.c.unit === 'قطعة').reduce((s, x) => s + (+x.c.qty || 0) * (+x.o.lines?.[0]?.qty || 0), 0);
     return `<details class="grp" ${gi < 3 ? 'open' : ''} style="--i:${gi}"><summary>${PREPBY === 'comp' ? ic(CK[L[0].c.k]?.[1] || 'box') : `<span class="av" style="width:28px;height:28px;font-size:12px">${esc(k.slice(0, 1))}</span>`}<span>${esc(k)}</span><span class="ct num">${L.length} ${PREPBY === 'comp' ? 'أوردر' : 'مكوّن'}${PREPBY === 'comp' && pcs ? ' · ' + fmt(pcs) + ' قطعة' : ''}</span><span class="sp"></span>${PREPBY === 'client' ? `<button class="btn ghost icon" data-printc="${esc(L[0].o.clientId)}" title="طباعة نواقص العميل" aria-label="طباعة">${ic('print')}</button>` : ''}${ic('chev', 'chev')}</summary>
-      ${L.map(x => `<div class="pl"><button class="tick" data-tick="${esc(x.o.oc)}|${x.i}" aria-label="جاهز">${ic('check')}</button><div class="grow"><b>${esc(PREPBY === 'comp' ? cname(x.o.clientId) : (CK[x.c.k]?.[0] || x.c.k))}</b> · ${esc(x.c.name || '')}<small><span class="code">${esc(x.o.oc)}</span> · ${esc(x.o.lines?.[0]?.product || '')} · ${fmt(x.c.qty)} ${esc(x.c.unit || '')}${x.c.unit === 'قطعة' ? ' × ' + fmt(x.o.lines?.[0]?.qty) + ' = ' + fmt((+x.c.qty || 0) * (+x.o.lines?.[0]?.qty || 0)) : ''}${x.c.note ? ' · ' + esc(x.c.note) : ''}${isPart(x.c, x.o) ? `<b style="color:var(--amber);display:block">◐ وصل ${fmt(gotN(x.c))} · باقي ${fmt(need(x.c, x.o) - gotN(x.c))}</b>` : ''}</small></div>${need(x.c, x.o) != null ? `<button class="btn line" data-part="${esc(x.o.oc)}|${x.i}" style="min-height:34px;padding:0 10px">جزئي</button>` : ''}<button class="btn ghost icon" data-open="${esc(x.o.oc)}" aria-label="افتح الأوردر">${ic('chev')}</button></div>`).join('')}</details>`; }).join('')}</div>`;
+      ${L.map(x => `<div class="pl"><button class="tick" data-tick="${esc(x.o.oc)}|${x.i}" aria-label="جاهز">${ic('check')}</button><div class="grow"><b>${esc(PREPBY === 'comp' ? cname(x.o.clientId) : (CK[x.c.k]?.[0] || x.c.k))}</b> · ${esc(x.c.name || '')}<small><span class="code">${esc(x.o.oc)}</span> · ${esc(x.o.lines?.[0]?.product || '')} · ${fmt(x.c.qty)} ${esc(x.c.unit || '')}${x.c.unit === 'قطعة' ? ' × ' + fmt(x.o.lines?.[0]?.qty) + ' = ' + fmt((+x.c.qty || 0) * (+x.o.lines?.[0]?.qty || 0)) : ''}${x.c.note ? ' · ' + esc(x.c.note) : ''}${isPart(x.c, x.o) ? `<b style="color:var(--amber);display:block">◐ وصل ${fmt(gotN(x.c))} · باقي ${fmt(need(x.c, x.o) - gotN(x.c))}</b>` : ''}</small></div>${(x.c.att || []).length ? `<button class="ca has" data-patt="${esc(x.o.oc)}|${x.i}" aria-label="الصور والملفات">${ic('clip')}<b>${x.c.att.length}</b></button>` : ''}${need(x.c, x.o) != null ? `<button class="btn line" data-part="${esc(x.o.oc)}|${x.i}" style="min-height:34px;padding:0 10px">جزئي</button>` : ''}<button class="btn ghost icon" data-open="${esc(x.o.oc)}" aria-label="افتح الأوردر">${ic('chev')}</button></div>`).join('')}</details>`; }).join('')}</div>`;
 }
 function vReady(){
   const R = ord().filter(o => o.status === 'ready'), N = ord().filter(o => o.status === 'delivered' && !o.invoiceNo).sort((a, b) => (b.deliveredAt || '').localeCompare(a.deliveredAt || ''));
@@ -578,12 +584,13 @@ function vSettings(){
 function bindView(){
   const V = $('view'); if (CUR === 'orders') { const s = $('sort'); if (s){ s.value = SORT; s.onchange = () => { SORT = s.value; render(); }; } }
   V.onclick = async e => {
-    const t = e.target.closest('[data-part],[data-act],[data-f],[data-v2],[data-by],[data-tick],[data-open],[data-adv],[data-deliver],[data-inv],[data-printc],[data-client],[data-theme],[data-oc],[data-stop]');
+    const t = e.target.closest('[data-patt],[data-part],[data-act],[data-f],[data-v2],[data-by],[data-tick],[data-open],[data-adv],[data-deliver],[data-inv],[data-printc],[data-client],[data-theme],[data-oc],[data-stop]');
     if (!t) return; const d = t.dataset;
     if ('stop' in d) return;
     if (d.f) { FIL = d.f; $('q').value = ''; if (CUR !== 'orders') return go('orders'); return render(); }
     if (d.v2) return go(d.v2);
     if (d.by) { PREPBY = d.by; return render(); }
+    if (d.patt) { e.stopPropagation(); const [oc, i] = d.patt.split('|'), o = S.orders[oc]; return attOpen(o.comps[+i], async () => { logIt(o, 'edit', 'مرفقات ' + cLabel(o.comps[+i])); await persist(); render(); }); }
     if (d.part) { e.stopPropagation(); const [oc, i] = d.part.split('|'); return partArrive(oc, +i); }
     if (d.tick) { e.stopPropagation(); const [oc, i] = d.tick.split('|'); return toggleComp(oc, +i); }
     if (d.open) { e.preventDefault(); e.stopPropagation(); return openOrder(d.open); }
@@ -627,21 +634,53 @@ async function invoice(oc, no){ const o = S.orders[oc]; if (!o) return; if (!no)
   const dup = ord().find(x => x.oc !== oc && x.invoiceNo && norm(x.invoiceNo) === norm(no)); if (dup && !confirm(`رقم الفاتورة ${no} متسجّل على ${dup.oc}. تكمّل؟`)) return;
   undoable(o, ''); o.invoiceNo = no; o.invoicedAt = nowISO(); const from = o.status; o.status = 'invoiced'; logIt(o, 'status', `${STATUS[from]} ← اتفوتر (فاتورة ${no})`); await persist(); render(); toast(`${oc} اتفوتر — فاتورة ${no}`, true); }
 
+/* ================= attachments: kept on the device (IndexedDB) + uploaded to Drive; never printed ================= */
+let ATT = null, ATTURLS = [];
+async function shrink(file){ if (!/^image\/(jpe?g|png|webp|heic|heif)/i.test(file.type)) return file;
+  try { const bm = await createImageBitmap(file), k = Math.min(1, 1600 / Math.max(bm.width, bm.height)), cv = document.createElement('canvas'); cv.width = Math.round(bm.width * k); cv.height = Math.round(bm.height * k);
+    cv.getContext('2d').drawImage(bm, 0, 0, cv.width, cv.height); const b = await new Promise(ok => cv.toBlob(ok, 'image/jpeg', .82));
+    return b && b.size < file.size ? new File([b], file.name.replace(/\.\w+$/, '') + '.jpg', { type:'image/jpeg' }) : file; } catch (e) { return file; } }
+const blobB64 = b => new Promise(ok => { const fr = new FileReader(); fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(b); });
+async function attGet(id){ let r = await kv.get('att:' + id); if (r) return r; if (!CLOUD) return null;
+  try { const j = await cloudCall({ action:'getFile', id }), bin = atob(j.data); r = { blob:new Blob([Uint8Array.from(bin, c => c.charCodeAt(0))], { type:j.mime }), name:j.name, type:j.mime }; await kv.set('att:' + id, r); return r; } catch (e) { return null; } }
+let ATTOLD = false;
+async function attUpload(){ if (!CLOUD) return; const q = (await kv.get('attQ')) || [], left = [];
+  for (const id of q) { const r = await kv.get('att:' + id); if (!r) continue;
+    try { await cloudCall({ action:'putFile', id, name:r.name, mime:r.type, data:await blobB64(r.blob) }); } catch (e) { left.push(id); if (/action/.test(e.message)) ATTOLD = true; } }
+  await kv.set('attQ', left); }
+async function attOpen(c, onChange){ ATT = { c, onChange }; $('attT').textContent = cLabel(c); $('attV').classList.remove('hide'); await attPaint(); if (!(c.att || []).length) $('attIn').click(); }
+async function attPaint(){ const c = ATT.c, B = $('attB'); ATTURLS.forEach(URL.revokeObjectURL); ATTURLS = [];
+  B.innerHTML = (c.att || []).length ? '' : '<p style="color:#ccc;text-align:center;margin-top:30px">مفيش صور أو ملفات لسه — دوس «ضيف صورة / ملف»</p>';
+  for (const [i, a] of (c.att || []).entries()) { const r = await attGet(a.id), box = document.createElement('div');
+    if (r && /^image\//.test(r.type)) { const u = URL.createObjectURL(r.blob); ATTURLS.push(u); box.innerHTML = `<img src="${u}" alt="${esc(a.name)}">`; }
+    box.insertAdjacentHTML('beforeend', `<div class="fi"><span style="word-break:break-all">${esc(a.name)}</span><span class="sp"></span>${r ? `<button class="btn line" data-aopen="${i}">فتح</button>` : '<small>مش متاح دلوقتي — محتاج نت</small>'}<button class="btn danger" data-adel="${i}">شيل</button></div>`);
+    B.appendChild(box); } }
+function attClose(){ $('attV').classList.add('hide'); ATTURLS.forEach(URL.revokeObjectURL); ATTURLS = []; ATT = null; }
+$('attX').onclick = attClose;
+$('attAdd').onclick = () => $('attIn').click();
+$('attIn').onchange = async e => { const fs = [...e.target.files]; e.target.value = ''; if (!fs.length || !ATT) return; let n = 0;
+  for (const f0 of fs) { if (f0.size > 15e6) { toast('«' + f0.name + '» أكبر من 15 ميجا'); continue; }
+    const f = await shrink(f0), id = uid('a'); await kv.set('att:' + id, { blob:f, name:f.name || 'ملف', type:f.type || 'application/octet-stream' });
+    (ATT.c.att = ATT.c.att || []).push({ id, name:f.name || 'ملف', type:f.type || '', size:f.size }); const q = (await kv.get('attQ')) || []; q.push(id); await kv.set('attQ', q); n++; }
+  if (n) { ATT.onChange && await ATT.onChange(); await attPaint(); attUpload(); } };
+$('attB').onclick = async e => { const o = e.target.closest('[data-aopen]'), d = e.target.closest('[data-adel]');
+  if (o) { const a = ATT.c.att[+o.dataset.aopen], r = await attGet(a.id); if (r) { if (/^image\//.test(r.type)) return; download(r.name, r.blob, r.type); } }
+  if (d && confirm('تشيل الملف ده من المكوّن؟')) { ATT.c.att.splice(+d.dataset.adel, 1); ATT.onChange && await ATT.onChange(); attPaint(); } };
 /* ================= order sheet ================= */
 let SH = null;
 function openSheet(title, body, foot){ $('shTitle').innerHTML = title; $('shBody').innerHTML = body; $('shFoot').innerHTML = foot; $('sheet').inert = false; $('scrim').classList.add('on'); $('sheet').classList.add('on'); SH = SH || {}; SH.ret = SH.ret || document.activeElement; }
 function closeSheet(force){ if (!force && DIRTY && !confirm('فيه تعديلات مش محفوظة. تقفل من غير حفظ؟')) return; DIRTY = false; $('sheet').inert = true; $('scrim').classList.remove('on'); $('sheet').classList.remove('on'); const r = SH?.ret; SH = null; if (r && r.focus) r.focus(); }
 $('shX').onclick = () => closeSheet(); $('scrim').onclick = () => closeSheet();
 function lastCompsFor(product){ const n = norm(product); if (!n) return null; const L = ord().filter(o => norm(o.lines?.[0]?.product) === n && o.comps?.length).sort((a, b) => b.createdAt.localeCompare(a.createdAt)); return L[0] ? L[0].comps.map(c => ({ ...c, ready:false, readyAt:null, note:'' })) : null; }
-const DEF_COMPS = () => ['bottle','box','dye','oil'].map(k => ({ k, name:'', unit: k === 'oil' || k === 'dye' ? '%' : 'قطعة', qty: k === 'oil' || k === 'dye' ? '' : 1, ready:false, readyAt:null, note:'' }));
-function compRow(c, i, lock){ return `<div class="comp" data-ci="${i}">
+const DEF_COMPS = () => [{ k:'other', name:'', unit:'قطعة', qty:1, ready:false, readyAt:null, note:'' }];
+function compRow(c, i, lock){ const na = (c.att || []).length; return `<div class="comp" data-ci="${i}">
   <button type="button" class="tick${c.ready ? ' on' : ''}" data-ct="${i}" aria-label="جاهز" ${lock ? 'disabled' : ''}>${ic('check')}</button>
-  <select class="in ck" data-cf="k" aria-label="نوع المكوّن">${Object.entries(CK).map(([k, [l]]) => `<option value="${k}"${k === c.k ? ' selected' : ''}>${l}</option>`).join('')}</select>
-  <input class="in cn" data-cf="name" value="${esc(c.name)}" placeholder="الصنف (اسم الزجاجة/العلبة…)" aria-label="الصنف">
-  <input class="in cq num" data-cf="qty" value="${esc(c.qty)}" inputmode="decimal" aria-label="الكمية">
+  <input class="in cn" data-cf="name" value="${esc(c.name || (c.k && c.k !== 'other' ? CK[c.k]?.[0] : '') || '')}" list="dlK" placeholder="اسم المكوّن (مثلاً: غرشة 100 مل)" aria-label="اسم المكوّن">
+  <input class="in cq num" data-cf="qty" value="${esc(c.qty)}" inputmode="decimal" aria-label="الكمية للقطعة" placeholder="الكمية">
   <select class="in cu" data-cf="unit" aria-label="الوحدة">${UNITS.map(u => `<option${u === c.unit ? ' selected' : ''}>${u}</option>`).join('')}</select>
+  <button type="button" class="ca${na ? ' has' : ''}" data-catt="${i}" aria-label="صورة أو ملف للمكوّن">${ic('clip')}${na ? `<b>${na}</b>` : ''}</button>
   <button type="button" class="x" data-cx="${i}" aria-label="شيل المكوّن">${ic('x')}</button>
-  <div class="note" style="display:flex;gap:8px">${c.unit === 'قطعة' && !c.ready ? `<input class="in num" data-cf="got" value="${esc(c.got || '')}" placeholder="وصل كام (جزئي)" inputmode="numeric" aria-label="الكمية اللي وصلت" style="max-width:150px">` : ''}<input class="in" data-cf="note" value="${esc(c.note)}" placeholder="ملاحظة (اختياري)" aria-label="ملاحظة"${c.ready ? ` title="جاهز ${tm(c.readyAt)}"` : ''}></div></div>`; }
+  <div class="note" style="display:flex;gap:8px">${c.unit === 'قطعة' && !c.ready ? `<input class="in num" data-cf="got" value="${esc(c.got || '')}" placeholder="وصل كام" inputmode="numeric" aria-label="الكمية اللي وصلت" style="max-width:120px">` : ''}<input class="in" data-cf="note" value="${esc(c.note)}" placeholder="ملاحظة" aria-label="ملاحظة"${c.ready ? ` title="جاهز ${tm(c.readyAt)}"` : ''}></div></div>`; }
 function pctLine(comps){ const p = comps.filter(c => c.unit === '%').reduce((s, c) => s + (+c.qty || 0), 0); if (!p) return ''; const ok = Math.abs(p - 100) < 0.01; return `<p class="pct${ok ? '' : ' bad'}">مجموع النسب (زيت + كحول + حافظة…): <b class="num">${fmt(p)}%</b>${ok ? ' ✓' : ' — لازم يبقى 100%'}</p>`; }
 let DRAFT = null, DIRTY = false;
 async function saveSilently(o){ logIt(o, 'edit', 'اتعدّل'); await persist(); }
@@ -657,7 +696,7 @@ function openOrder(oc, keep){
   openSheet(o ? `<span class="code">${esc(o.oc)}</span>${pill(o)}` : 'أوردر جديد',
    `<form id="of" autocomplete="off" onsubmit="return false"><div class="fg">
      <div class="full"><label class="f" for="fCl">العميل</label><input class="in" id="fCl" list="dlC" value="${esc(cl)}" placeholder="اكتب اسم العميل" required><datalist id="dlC">${clientsDL}</datalist></div>
-     <div class="full"><label class="f" for="fPr">المنتج</label><input class="in" id="fPr" list="dlP" value="${esc(ln.product)}" placeholder="اسم العطر / المنتج"><datalist id="dlP">${prodDL}</datalist></div>
+     <div class="full"><label class="f" for="fPr">المنتج</label><input class="in" id="fPr" list="dlP" value="${esc(ln.product)}" placeholder="اسم العطر / المنتج"><datalist id="dlP">${prodDL}</datalist><datalist id="dlK">${[...new Set(ord().flatMap(x => (x.comps || []).map(c => c.name)).filter(Boolean))].slice(0, 400).map(n => `<option value="${esc(n)}">`).join('')}</datalist></div>
      <div><label class="f" for="fSz">الحجم</label><input class="in" id="fSz" value="${esc(ln.size)}" placeholder="مثال: 100 مل"></div>
      <div><label class="f" for="fCd">كود دفترة (اختياري)</label><input class="in num" id="fCd" value="${esc(ln.daftraCode || '')}" dir="ltr"></div>
      <div><label class="f" for="fQ">الكمية</label><input class="in num" id="fQ" value="${esc(ln.qty)}" inputmode="numeric" placeholder="عدد القطع"></div>
@@ -679,14 +718,17 @@ function readForm(){ const D = DRAFT, ln = D.lines[0];
   D._cname = $('fCl').value.trim(); ln.product = $('fPr').value.trim(); ln.size = $('fSz').value.trim(); ln.daftraCode = $('fCd').value.trim();
   ln.qty = $('fQ').value.trim() === '' ? '' : +String($('fQ').value).replace(/[^\d.]/g, ''); ln.price = $('fP').value.trim() === '' ? '' : +String($('fP').value).replace(/[^\d.]/g, '');
   D.dueDate = $('fDue').value || null; D.notes = $('fN').value.trim(); D.invoiceNo = $('fInv').value.trim();
-  $('cList').querySelectorAll('.comp').forEach(r => { const c = D.comps[+r.dataset.ci]; r.querySelectorAll('[data-cf]').forEach(f => { c[f.dataset.cf] = (f.dataset.cf === 'qty' || f.dataset.cf === 'got') ? (f.value === '' ? '' : +String(f.value).replace(/[^\d.]/g, '')) : f.value; }); }); }
+  $('cList').querySelectorAll('.comp').forEach(r => { const c = D.comps[+r.dataset.ci]; r.querySelectorAll('[data-cf]').forEach(f => { if (f.dataset.cf === 'name' && norm(f.value) !== norm(c.name)) { c.k = guessK(f.value); }
+      c[f.dataset.cf] = (f.dataset.cf === 'qty' || f.dataset.cf === 'got') ? (f.value === '' ? '' : +String(f.value).replace(/[^\d.]/g, '')) : f.value; }); }); }
 function bindOrderForm(o){
   const redrawComps = () => { $('cList').innerHTML = DRAFT.comps.map((c, i) => compRow(c, i)).join(''); $('cPct').innerHTML = pctLine(DRAFT.comps); };
-  $('cAdd').onclick = () => { readForm(); DRAFT.comps.push({ k:'sticker', name:'', unit:'قطعة', qty:1, ready:false, readyAt:null, note:'' }); redrawComps(); $('cList').lastElementChild.querySelector('.cn').focus(); };
-  $('cList').onclick = e => { const x = e.target.closest('[data-cx]'), t = e.target.closest('[data-ct]'); if (!x && !t) return; readForm();
+  $('cAdd').onclick = () => { readForm(); DRAFT.comps.push({ k:'other', name:'', unit:'قطعة', qty:1, ready:false, readyAt:null, note:'' }); redrawComps(); $('cList').lastElementChild.querySelector('.cn').focus(); };
+  $('cList').onclick = e => { const at = e.target.closest('[data-catt]'); if (at) { readForm(); return attOpen(DRAFT.comps[+at.dataset.catt], () => { DIRTY = true; redrawComps(); }); }
+    const x = e.target.closest('[data-cx]'), t = e.target.closest('[data-ct]'); if (!x && !t) return; readForm();
     if (t && o && S.orders[o.oc].comps[+t.dataset.ct] && !DIRTY) { toggleComp(o.oc, +t.dataset.ct); return; }
     DIRTY = true; if (x) DRAFT.comps.splice(+x.dataset.cx, 1); else { const c = DRAFT.comps[+t.dataset.ct]; c.ready = !c.ready; c.readyAt = c.ready ? nowISO() : null; }
     redrawComps(); };
+  $('cList').onkeydown = e => { if (e.key === 'Enter' && e.target.dataset.cf === 'name') { e.preventDefault(); $('cAdd').click(); } };
   $('cList').oninput = e => { if (e.target.dataset.cf === 'qty' || e.target.dataset.cf === 'unit') { readForm(); $('cPct').innerHTML = pctLine(DRAFT.comps); } };
   const tot = () => { const q = +$('fQ').value || 0, p = +$('fP').value || 0; $('fTot').textContent = q && p ? fmt(q * p) : '—'; };
   $('fQ').oninput = $('fP').oninput = tot;
@@ -707,7 +749,7 @@ async function saveOrder(o, silent){
   if (!D._cname) { toast('اكتب اسم العميل'); $('fCl').focus(); return; }
   if (!D.lines[0].product) { toast('اكتب اسم المنتج'); $('fPr').focus(); return; }
   if (!(+D.lines[0].qty > 0)) { toast('اكتب الكمية'); $('fQ').focus(); return; }
-  D.comps = D.comps.filter(c => c.name || c.qty !== '' || c.ready);
+  D.comps = D.comps.filter(c => (c.name || '').trim() || c.ready || (c.att || []).length);
   D.clientId = ensureClient(D._cname); delete D._cname;
   if (o) { const prev = JSON.stringify(o), keepF = {}; for (const f of ['oc','log','status','invoiceNo','invoicedAt','deliveredAt','cancelledAt','cancelReason','comps']) keepF[f] = o[f]; const newInv = D.invoiceNo; Object.assign(o, D, keepF); if (DIRTY) o.comps = D.comps; DIRTY = false; normComps(o); if (newInv && newInv !== o.invoiceNo) { if (o.status === 'delivered' || o.status === 'invoiced') { await saveSilently(o); return invoice(o.oc, newInv).then(() => { if (!silent) closeSheet(); }); } o.invoiceNo = newInv; } else if (!newInv && o.invoiceNo && o.status !== 'invoiced') o.invoiceNo = ''; if (JSON.stringify(o) !== prev){ logIt(o, 'edit', 'اتعدّل'); autoStatus(o); } await persist(); render(); if (!silent) { toast('اتحفظ ' + o.oc); closeSheet(true); } return; }
   DIRTY = false; normComps(D); const n = { ...D, oc:nextOC(), createdAt:nowISO(), status:'open', log:[], deleted:false, deliveredAt:null, invoicedAt:null };
@@ -729,6 +771,7 @@ function openClient(id){ const c = id ? S.clients[id] : { id:null, name:'', phon
 /* ================= keyboard ================= */
 document.addEventListener('keydown', e => {
   const inField = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName), sheetOn = $('sheet').classList.contains('on');
+  if (e.key === 'Escape' && !$('attV').classList.contains('hide')) { attClose(); return; }
   if (e.key === 'Escape') { if (sheetOn) { e.preventDefault(); closeSheet(); } else if ($('q').value) { $('q').value = ''; render(); } return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); if (sheetOn && $('oSave')) $('oSave').click(); else if (DIR) permOK(DIR, true).then(ok => ok && writeDrive()); return; }
   if (inField || sheetOn || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -852,9 +895,9 @@ function printFull(onlyId, missOnly){
   /* 1) shopping / chasing list: one line per missing item across all orders */
   const B = new Map();
   for (const o of L) for (const c of miss(o)) { const key = c.k + '|' + norm(c.name) + '|' + c.unit; if (!B.has(key)) B.set(key, { c, pcs:0, other:[], orders:[] }); const x = B.get(key), r = req(c, o);
-    if (r != null) { x.pcs += r - gotN(c); if (gotN(c)) x.part = true; } else x.other.push(qtyTxt(c)); x.orders.push(o); }
+    if (r != null) { x.pcs += r - gotN(c); if (gotN(c)) x.part = true; } else x.other.push(qtyTxt(c)); x.orders.push({ o, c, rem: r != null ? r - gotN(c) : null }); }
   const buy = [...B.values()].sort((a, b) => b.orders.length - a.orders.length || cname2(a.c).localeCompare(cname2(b.c), 'ar'));
-  const buyTbl = buy.length ? `<h2 class="sh">قايمة النواقص المجمّعة — للشراء والمتابعة <span>${buy.length} صنف</span></h2><table class="bt"><thead><tr><th class="bx"></th><th style="width:30%">الصنف</th><th style="width:20%">المطلوب</th><th>مستنياه (العملاء)</th></tr></thead><tbody>${buy.map(x => `<tr><td class="bx">☐</td><td><b>${esc(x.c.name || cname2(x.c))}</b><small>${esc(cname2(x.c))}</small></td><td class="n"><b>${x.pcs ? fmt(x.pcs) + ' قطعة' : ''}</b>${x.part ? '<small>بعد خصم اللي وصل جزئي</small>' : ''}${x.other.length ? `<small>${[...new Set(x.other)].join(' / ')} للقطعة</small>` : ''}</td><td class="ol"><b>${x.orders.length} أوردر:</b> ${Object.entries(x.orders.reduce((m, o) => (m[cname(o.clientId)] = (m[cname(o.clientId)] || 0) + 1, m), {})).sort((p, q) => q[1] - p[1]).map(([c, n]) => esc(c) + (n > 1 ? ` (${n})` : '')).join('، ')}</td></tr>`).join('')}</tbody></table>` : '';
+  const buyTbl = buy.length ? `<h2 class="sh">قايمة النواقص المجمّعة — للشراء والمتابعة <span>${buy.length} صنف</span></h2><table class="bt"><thead><tr><th class="bx"></th><th style="width:30%">الصنف</th><th style="width:20%">المطلوب</th><th>مستنياه (العميل · العطر · الكمية)</th></tr></thead><tbody>${buy.map(x => `<tr><td class="bx">☐</td><td><b>${esc(x.c.name || cname2(x.c))}</b><small>${esc(cname2(x.c))}</small></td><td class="n"><b>${x.pcs ? fmt(x.pcs) + ' قطعة' : ''}</b>${x.part ? '<small>بعد خصم اللي وصل جزئي</small>' : ''}${x.other.length ? `<small>${[...new Set(x.other)].join(' / ')} للقطعة</small>` : ''}</td><td class="ol">${x.orders.map(y => `<div class="li"><span>${esc(cname(y.o.clientId))} · <b>${esc(y.o.lines[0]?.product || '')}</b></span><span class="n">${y.rem != null ? fmt(y.rem) + (gotN(y.c) ? ' (باقي)' : '') : qtyTxt(y.c)}</span></div>`).join('')}</td></tr>`).join('')}</tbody></table>` : '';
   const sum = `<div class="sum"><div class="g"><small>✓ جاهز للتعبئة</small><b>${fill.length}</b></div><div class="r"><small>✗ واقف على نواقص</small><b>${blocked}</b></div><div><small>سطور ناقصة</small><b>${lines}</b></div>${onlyId ? '' : `<div><small>العملاء</small><b>${groups.length}</b></div>`}</div>`;
   /* 2) per client → order cards */
   const body = groups.map(([cid, os]) => `<table class="cg"><thead><tr><th><h2 class="cl">${esc(cname(cid))}<span>${os.length} أوردر · ${os.filter(o => fill.includes(o)).length} جاهز للتعبئة</span></h2></th></tr></thead><tbody>` + os.sort((a, b) => (fill.includes(b) - fill.includes(a)) || a.createdAt.localeCompare(b.createdAt)).map(o => {
