@@ -260,7 +260,8 @@ body.pv{background:#fff}body.pv #print{display:block;padding:calc(64px + env(saf
 #print h2.cl{font-size:12pt;font-weight:700;margin:14px 0 6px;padding:5px 10px;border-right:4px solid #1e1a22;background:#f3f1f4;display:flex;gap:10px;align-items:baseline;break-after:avoid}#print h2.cl span{font-size:8.5pt;font-weight:400;color:#5d5664}
 #print .oh .q{font-weight:700}#print .om{font-size:8.5pt;color:#5d5664;padding:3px 10px 4px;border-bottom:1px solid #e2dee5}#print .om b{color:#000}
 #print .vd{font-size:9pt;font-weight:700;padding:2px 9px;border-radius:6px;border:1.5px solid #8e8795;white-space:nowrap}#print .vd.ok{border:2px solid #000;background:#fff;color:#000}#print .vd.no{border:1.5px dashed #000;color:#000}
-#print .tag.miss{background:#1e1a22!important;color:#fff!important}#print .tag.ok{background:#fff!important;color:#5d5664!important;border:1px solid #8e8795;font-weight:600}
+#print .tag.miss{background:#1e1a22!important;color:#fff!important}#print .tag.part{background:#fff!important;color:#000!important;border:1.5px solid #000}
+#print table.cg{border:0;margin:0}#print table.cg>thead>tr>th,#print table.cg>tbody>tr>td{padding:0;border:0;background:none}#print table.cg>tbody>tr{break-inside:avoid}#print table.cg>thead{display:table-header-group}#print .tag.ok{background:#fff!important;color:#5d5664!important;border:1px solid #8e8795;font-weight:600}
 #print tr.miss td{background:#fff}#print tr.miss td:first-child{box-shadow:inset -3px 0 0 #1e1a22}#print tr.ok td{color:#6d6674}#print tr.ok td:first-child{box-shadow:none}
 #print td small{font-size:7.5pt;color:#8e8795;font-weight:400;margin-inline-start:6px}#print td.n small{display:block;margin:0}#print td.ol{font-size:8pt;line-height:1.5;direction:rtl;word-break:break-word}#print .bx{width:22px;text-align:center;font-size:11pt;padding-left:2px;padding-right:2px}
 #print td{padding:4px 7px}#print th{padding:4px 7px}#print table thead{display:table-header-group}
@@ -357,6 +358,10 @@ const STATUS = { open:'بيتجهّز', ready:'جاهز', delivered:'اتسلّ�
 const CK = { bottle:['غرشة','bottle'], cap:['غطا','bottle'], pump:['بمب','bottle'], spray:['بخاخ','bottle'], box:['علبة','box'], sticker:['ستيكر','box'], plate:['بليت','box'], bottomsticker:['ستيكر قاعدة','box'], dye:['صبغة','dye'], alcohol:['كحول','oil'], oil:['زيت','oil'], bacteria:['مادة حافظة','oil'] };
 const UNITS = ['قطعة','%','مل','جرام','كجم'];
 const isOpen = o => o.status === 'open' || o.status === 'ready';
+const need = (c, o) => c.unit === 'قطعة' && c.qty !== '' && c.qty != null ? (+c.qty || 0) * (+o.lines?.[0]?.qty || 0) : null;
+const gotN = c => +c.got || 0;
+const isPart = (c, o) => !c.ready && gotN(c) > 0 && need(c, o) != null;
+function normComps(o){ for (const c of o.comps || []) { const n = need(c, o); if (!c.ready && n && gotN(c) >= n) { c.ready = true; c.readyAt = nowISO(); } } }
 
 /* ================= storage: IndexedDB master + Drive folder mirror ================= */
 const DBP = new Promise((ok, no) => { const r = indexedDB.open('noor-orders2', 1); r.onupgradeneeded = () => { r.result.createObjectStore('kv'); }; r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); });
@@ -534,7 +539,7 @@ function vPrep(){
   return seg + `<div class="panel anim">${[...G].sort((a, b) => b[1].length - a[1].length).map(([k, L], gi) => {
     const pcs = L.filter(x => x.c.unit === 'قطعة').reduce((s, x) => s + (+x.c.qty || 0) * (+x.o.lines?.[0]?.qty || 0), 0);
     return `<details class="grp" ${gi < 3 ? 'open' : ''} style="--i:${gi}"><summary>${PREPBY === 'comp' ? ic(CK[L[0].c.k]?.[1] || 'box') : `<span class="av" style="width:28px;height:28px;font-size:12px">${esc(k.slice(0, 1))}</span>`}<span>${esc(k)}</span><span class="ct num">${L.length} ${PREPBY === 'comp' ? 'أوردر' : 'مكوّن'}${PREPBY === 'comp' && pcs ? ' · ' + fmt(pcs) + ' قطعة' : ''}</span><span class="sp"></span>${PREPBY === 'client' ? `<button class="btn ghost icon" data-printc="${esc(L[0].o.clientId)}" title="طباعة نواقص العميل" aria-label="طباعة">${ic('print')}</button>` : ''}${ic('chev', 'chev')}</summary>
-      ${L.map(x => `<div class="pl"><button class="tick" data-tick="${esc(x.o.oc)}|${x.i}" aria-label="جاهز">${ic('check')}</button><div class="grow"><b>${esc(PREPBY === 'comp' ? cname(x.o.clientId) : (CK[x.c.k]?.[0] || x.c.k))}</b> · ${esc(x.c.name || '')}<small><span class="code">${esc(x.o.oc)}</span> · ${esc(x.o.lines?.[0]?.product || '')} · ${fmt(x.c.qty)} ${esc(x.c.unit || '')}${x.c.unit === 'قطعة' ? ' × ' + fmt(x.o.lines?.[0]?.qty) + ' = ' + fmt((+x.c.qty || 0) * (+x.o.lines?.[0]?.qty || 0)) : ''}${x.c.note ? ' · ' + esc(x.c.note) : ''}</small></div><button class="btn ghost icon" data-open="${esc(x.o.oc)}" aria-label="افتح الأوردر">${ic('chev')}</button></div>`).join('')}</details>`; }).join('')}</div>`;
+      ${L.map(x => `<div class="pl"><button class="tick" data-tick="${esc(x.o.oc)}|${x.i}" aria-label="جاهز">${ic('check')}</button><div class="grow"><b>${esc(PREPBY === 'comp' ? cname(x.o.clientId) : (CK[x.c.k]?.[0] || x.c.k))}</b> · ${esc(x.c.name || '')}<small><span class="code">${esc(x.o.oc)}</span> · ${esc(x.o.lines?.[0]?.product || '')} · ${fmt(x.c.qty)} ${esc(x.c.unit || '')}${x.c.unit === 'قطعة' ? ' × ' + fmt(x.o.lines?.[0]?.qty) + ' = ' + fmt((+x.c.qty || 0) * (+x.o.lines?.[0]?.qty || 0)) : ''}${x.c.note ? ' · ' + esc(x.c.note) : ''}${isPart(x.c, x.o) ? `<b style="color:var(--amber);display:block">◐ وصل ${fmt(gotN(x.c))} · باقي ${fmt(need(x.c, x.o) - gotN(x.c))}</b>` : ''}</small></div>${need(x.c, x.o) != null ? `<button class="btn line" data-part="${esc(x.o.oc)}|${x.i}" style="min-height:34px;padding:0 10px">جزئي</button>` : ''}<button class="btn ghost icon" data-open="${esc(x.o.oc)}" aria-label="افتح الأوردر">${ic('chev')}</button></div>`).join('')}</details>`; }).join('')}</div>`;
 }
 function vReady(){
   const R = ord().filter(o => o.status === 'ready'), N = ord().filter(o => o.status === 'delivered' && !o.invoiceNo).sort((a, b) => (b.deliveredAt || '').localeCompare(a.deliveredAt || ''));
@@ -567,12 +572,13 @@ function vSettings(){
 function bindView(){
   const V = $('view'); if (CUR === 'orders') { const s = $('sort'); if (s){ s.value = SORT; s.onchange = () => { SORT = s.value; render(); }; } }
   V.onclick = async e => {
-    const t = e.target.closest('[data-act],[data-f],[data-v2],[data-by],[data-tick],[data-open],[data-adv],[data-deliver],[data-inv],[data-printc],[data-client],[data-theme],[data-oc],[data-stop]');
+    const t = e.target.closest('[data-part],[data-act],[data-f],[data-v2],[data-by],[data-tick],[data-open],[data-adv],[data-deliver],[data-inv],[data-printc],[data-client],[data-theme],[data-oc],[data-stop]');
     if (!t) return; const d = t.dataset;
     if ('stop' in d) return;
     if (d.f) { FIL = d.f; $('q').value = ''; if (CUR !== 'orders') return go('orders'); return render(); }
     if (d.v2) return go(d.v2);
     if (d.by) { PREPBY = d.by; return render(); }
+    if (d.part) { e.stopPropagation(); const [oc, i] = d.part.split('|'); return partArrive(oc, +i); }
     if (d.tick) { e.stopPropagation(); const [oc, i] = d.tick.split('|'); return toggleComp(oc, +i); }
     if (d.open) { e.preventDefault(); e.stopPropagation(); return openOrder(d.open); }
     if (d.adv) { e.stopPropagation(); return advance(d.adv); }
@@ -592,6 +598,12 @@ function bindView(){
 $('q').addEventListener('input', () => { clearTimeout(render.t); render.t = setTimeout(() => { if (CUR !== 'orders' && CUR !== 'clients' && $('q').value.trim()) CUR = 'orders'; LIMIT = 150; KF = -1; render(); }, 90); });
 
 /* ================= actions ================= */
+async function partArrive(oc, i){ const o = S.orders[oc]; if (!o) return; const c = o.comps[i], n = need(c, o);
+  const v = prompt(`${CK[c.k]?.[0] || c.k} ${c.name || ''}\nالمطلوب ${fmt(n)} — وصل لحد دلوقتي ${fmt(gotN(c))}\nاكتب إجمالي اللي وصل:`, gotN(c) || ''); if (v === null) return;
+  const g = +String(v).replace(/[٠-٩]/g, d => d.charCodeAt(0) - 1632).replace(/[^\d.]/g, ''); if (!(g >= 0)) { toast('اكتب رقم'); return; }
+  undoable(o, ''); c.got = g; c.ready = g >= n; c.readyAt = c.ready ? nowISO() : null; logIt(o, c.ready ? 'comp+' : 'edit', `${CK[c.k]?.[0] || c.k}${c.name ? ' (' + c.name + ')' : ''}: وصل ${fmt(g)} من ${fmt(n)}`);
+  const st = autoStatus(o); await persist(); render(); if (SH && SH.oc === oc) openOrder(oc, true);
+  toast(c.ready ? `${CK[c.k]?.[0] || c.k}: وصل كامل${st === 'ready' ? ' — الأوردر بقى جاهز' : ''}` : `${CK[c.k]?.[0] || c.k}: وصل ${fmt(g)} · باقي ${fmt(n - g)}`, true); }
 async function toggleComp(oc, i){ const o = S.orders[oc]; if (!o) return; undoable(o, '');
   const c = o.comps[i]; c.ready = !c.ready; c.readyAt = c.ready ? nowISO() : null; logIt(o, c.ready ? 'comp+' : 'comp-', `${CK[c.k]?.[0] || c.k}${c.name ? ' (' + c.name + ')' : ''} ${c.ready ? 'جاهز' : 'مش جاهز'}`);
   const st = autoStatus(o); await persist(); render(); if (SH && SH.oc === oc) openOrder(oc, true);
@@ -623,7 +635,7 @@ function compRow(c, i, lock){ return `<div class="comp" data-ci="${i}">
   <input class="in cq num" data-cf="qty" value="${esc(c.qty)}" inputmode="decimal" aria-label="الكمية">
   <select class="in cu" data-cf="unit" aria-label="الوحدة">${UNITS.map(u => `<option${u === c.unit ? ' selected' : ''}>${u}</option>`).join('')}</select>
   <button type="button" class="x" data-cx="${i}" aria-label="شيل المكوّن">${ic('x')}</button>
-  ${c.note || c.ready ? `<input class="in note" data-cf="note" value="${esc(c.note)}" placeholder="ملاحظة (اختياري)" aria-label="ملاحظة"${c.ready ? ` title="جاهز ${tm(c.readyAt)}"` : ''}>` : ''}</div>`; }
+  <div class="note" style="display:flex;gap:8px">${c.unit === 'قطعة' && !c.ready ? `<input class="in num" data-cf="got" value="${esc(c.got || '')}" placeholder="وصل كام (جزئي)" inputmode="numeric" aria-label="الكمية اللي وصلت" style="max-width:150px">` : ''}<input class="in" data-cf="note" value="${esc(c.note)}" placeholder="ملاحظة (اختياري)" aria-label="ملاحظة"${c.ready ? ` title="جاهز ${tm(c.readyAt)}"` : ''}></div></div>`; }
 function pctLine(comps){ const p = comps.filter(c => c.unit === '%').reduce((s, c) => s + (+c.qty || 0), 0); if (!p) return ''; const ok = Math.abs(p - 100) < 0.01; return `<p class="pct${ok ? '' : ' bad'}">مجموع النسب (زيت + كحول + حافظة…): <b class="num">${fmt(p)}%</b>${ok ? ' ✓' : ' — لازم يبقى 100%'}</p>`; }
 let DRAFT = null, DIRTY = false;
 async function saveSilently(o){ logIt(o, 'edit', 'اتعدّل'); await persist(); }
@@ -661,7 +673,7 @@ function readForm(){ const D = DRAFT, ln = D.lines[0];
   D._cname = $('fCl').value.trim(); ln.product = $('fPr').value.trim(); ln.size = $('fSz').value.trim(); ln.daftraCode = $('fCd').value.trim();
   ln.qty = $('fQ').value.trim() === '' ? '' : +String($('fQ').value).replace(/[^\d.]/g, ''); ln.price = $('fP').value.trim() === '' ? '' : +String($('fP').value).replace(/[^\d.]/g, '');
   D.dueDate = $('fDue').value || null; D.notes = $('fN').value.trim(); D.invoiceNo = $('fInv').value.trim();
-  $('cList').querySelectorAll('.comp').forEach(r => { const c = D.comps[+r.dataset.ci]; r.querySelectorAll('[data-cf]').forEach(f => { c[f.dataset.cf] = f.dataset.cf === 'qty' ? (f.value === '' ? '' : +String(f.value).replace(/[^\d.]/g, '')) : f.value; }); }); }
+  $('cList').querySelectorAll('.comp').forEach(r => { const c = D.comps[+r.dataset.ci]; r.querySelectorAll('[data-cf]').forEach(f => { c[f.dataset.cf] = (f.dataset.cf === 'qty' || f.dataset.cf === 'got') ? (f.value === '' ? '' : +String(f.value).replace(/[^\d.]/g, '')) : f.value; }); }); }
 function bindOrderForm(o){
   const redrawComps = () => { $('cList').innerHTML = DRAFT.comps.map((c, i) => compRow(c, i)).join(''); $('cPct').innerHTML = pctLine(DRAFT.comps); };
   $('cAdd').onclick = () => { readForm(); DRAFT.comps.push({ k:'sticker', name:'', unit:'قطعة', qty:1, ready:false, readyAt:null, note:'' }); redrawComps(); $('cList').lastElementChild.querySelector('.cn').focus(); };
@@ -691,8 +703,8 @@ async function saveOrder(o, silent){
   if (!(+D.lines[0].qty > 0)) { toast('اكتب الكمية'); $('fQ').focus(); return; }
   D.comps = D.comps.filter(c => c.name || c.qty !== '' || c.ready);
   D.clientId = ensureClient(D._cname); delete D._cname;
-  if (o) { const prev = JSON.stringify(o), keepF = {}; for (const f of ['oc','log','status','invoiceNo','invoicedAt','deliveredAt','cancelledAt','cancelReason','comps']) keepF[f] = o[f]; const newInv = D.invoiceNo; Object.assign(o, D, keepF); if (DIRTY) o.comps = D.comps; DIRTY = false; if (newInv && newInv !== o.invoiceNo) { if (o.status === 'delivered' || o.status === 'invoiced') { await saveSilently(o); return invoice(o.oc, newInv).then(() => { if (!silent) closeSheet(); }); } o.invoiceNo = newInv; } else if (!newInv && o.invoiceNo && o.status !== 'invoiced') o.invoiceNo = ''; if (JSON.stringify(o) !== prev){ logIt(o, 'edit', 'اتعدّل'); autoStatus(o); } await persist(); render(); if (!silent) { toast('اتحفظ ' + o.oc); closeSheet(true); } return; }
-  DIRTY = false; const n = { ...D, oc:nextOC(), createdAt:nowISO(), status:'open', log:[], deleted:false, deliveredAt:null, invoicedAt:null };
+  if (o) { const prev = JSON.stringify(o), keepF = {}; for (const f of ['oc','log','status','invoiceNo','invoicedAt','deliveredAt','cancelledAt','cancelReason','comps']) keepF[f] = o[f]; const newInv = D.invoiceNo; Object.assign(o, D, keepF); if (DIRTY) o.comps = D.comps; DIRTY = false; normComps(o); if (newInv && newInv !== o.invoiceNo) { if (o.status === 'delivered' || o.status === 'invoiced') { await saveSilently(o); return invoice(o.oc, newInv).then(() => { if (!silent) closeSheet(); }); } o.invoiceNo = newInv; } else if (!newInv && o.invoiceNo && o.status !== 'invoiced') o.invoiceNo = ''; if (JSON.stringify(o) !== prev){ logIt(o, 'edit', 'اتعدّل'); autoStatus(o); } await persist(); render(); if (!silent) { toast('اتحفظ ' + o.oc); closeSheet(true); } return; }
+  DIRTY = false; normComps(D); const n = { ...D, oc:nextOC(), createdAt:nowISO(), status:'open', log:[], deleted:false, deliveredAt:null, invoicedAt:null };
   logIt(n, 'create', 'أوردر جديد'); autoStatus(n); S.orders[n.oc] = n; DIRTY = false; await persist(); closeSheet(true); render(); toast('اتسجّل ' + n.oc);
 }
 /* ================= clients ================= */
@@ -825,19 +837,19 @@ function printFull(onlyId, missOnly){
   /* 1) shopping / chasing list: one line per missing item across all orders */
   const B = new Map();
   for (const o of L) for (const c of miss(o)) { const key = c.k + '|' + norm(c.name) + '|' + c.unit; if (!B.has(key)) B.set(key, { c, pcs:0, other:[], orders:[] }); const x = B.get(key), r = req(c, o);
-    if (r != null) x.pcs += r; else x.other.push(qtyTxt(c)); x.orders.push(o.oc); }
+    if (r != null) { x.pcs += r - gotN(c); if (gotN(c)) x.part = true; } else x.other.push(qtyTxt(c)); x.orders.push(o.oc); }
   const buy = [...B.values()].sort((a, b) => b.orders.length - a.orders.length || cname2(a.c).localeCompare(cname2(b.c), 'ar'));
-  const buyTbl = buy.length ? `<h2 class="sh">قايمة النواقص المجمّعة — للشراء والمتابعة <span>${buy.length} صنف</span></h2><table class="bt"><thead><tr><th class="bx"></th><th style="width:30%">الصنف</th><th style="width:20%">المطلوب</th><th>مستنياه أوردرات</th></tr></thead><tbody>${buy.map(x => `<tr><td class="bx">☐</td><td><b>${esc(x.c.name || cname2(x.c))}</b><small>${esc(cname2(x.c))}</small></td><td class="n"><b>${x.pcs ? fmt(x.pcs) + ' قطعة' : ''}</b>${x.other.length ? `<small>${[...new Set(x.other)].join(' / ')} للقطعة</small>` : ''}</td><td class="ol"><b>${x.orders.length}</b> · ${x.orders.join('، ')}</td></tr>`).join('')}</tbody></table>` : '';
+  const buyTbl = buy.length ? `<h2 class="sh">قايمة النواقص المجمّعة — للشراء والمتابعة <span>${buy.length} صنف</span></h2><table class="bt"><thead><tr><th class="bx"></th><th style="width:30%">الصنف</th><th style="width:20%">المطلوب</th><th>مستنياه أوردرات</th></tr></thead><tbody>${buy.map(x => `<tr><td class="bx">☐</td><td><b>${esc(x.c.name || cname2(x.c))}</b><small>${esc(cname2(x.c))}</small></td><td class="n"><b>${x.pcs ? fmt(x.pcs) + ' قطعة' : ''}</b>${x.part ? '<small>بعد خصم اللي وصل جزئي</small>' : ''}${x.other.length ? `<small>${[...new Set(x.other)].join(' / ')} للقطعة</small>` : ''}</td><td class="ol"><b>${x.orders.length}</b> · ${x.orders.join('، ')}</td></tr>`).join('')}</tbody></table>` : '';
   const sum = `<div class="sum"><div class="g"><small>✓ جاهز للتعبئة</small><b>${fill.length}</b></div><div class="r"><small>✗ واقف على نواقص</small><b>${blocked}</b></div><div><small>سطور ناقصة</small><b>${lines}</b></div>${onlyId ? '' : `<div><small>العملاء</small><b>${groups.length}</b></div>`}</div>`;
   /* 2) per client → order cards */
-  const body = groups.map(([cid, os]) => `<h2 class="cl">${esc(cname(cid))}<span>${os.length} أوردر · ${os.filter(o => fill.includes(o)).length} جاهز للتعبئة</span></h2>` + os.sort((a, b) => (fill.includes(b) - fill.includes(a)) || a.createdAt.localeCompare(b.createdAt)).map(o => {
+  const body = groups.map(([cid, os]) => `<table class="cg"><thead><tr><th><h2 class="cl">${esc(cname(cid))}<span>${os.length} أوردر · ${os.filter(o => fill.includes(o)).length} جاهز للتعبئة</span></h2></th></tr></thead><tbody>` + os.sort((a, b) => (fill.includes(b) - fill.includes(a)) || a.createdAt.localeCompare(b.createdAt)).map(o => {
       const l = o.lines[0] || {}, m = miss(o), n = (o.comps || []).length, d = dueInfo(o);
       const rows = (o.comps || []).map((c, i) => ({ c, i })).filter(x => !missOnly || !x.c.ready).sort((a, b) => a.c.ready - b.c.ready || a.i - b.i);
       const hasDate = !missOnly && rows.some(x => x.c.ready), hasNote = rows.some(x => x.c.note);
       const verdict = !n ? '<span class="vd">من غير مكوّنات</span>' : m.length ? `<span class="vd no">✗ واقف على: ${esc([...new Set(m.map(cname2))].join('، '))}</span>` : '<span class="vd ok">✓ جاهز للتعبئة</span>';
       return `<div class="oc"><div class="oh"><span class="code">${esc(o.oc)}</span><span class="pr">${esc(l.product)}${l.size ? ' · ' + esc(l.size) : ''} <b class="q">× ${fmt(l.qty)}</b></span><span class="sp"></span>${verdict}</div>
       <div class="om">اتعمل ${dmy(o.createdAt)} · ${o.dueDate ? `التسليم ${dmy(o.dueDate)}${d && d.d < 0 ? ` <b>(${d.txt})</b>` : ''}` : 'بدون موعد تسليم'} · ${n - m.length}/${n} واصل</div>
-      ${rows.length ? `<table><thead><tr><th class="bx"></th><th style="width:34%">الصنف</th><th style="width:15%">للقطعة</th><th style="width:13%">المطلوب</th><th style="width:13%">الحالة</th>${hasDate ? '<th style="width:11%">وصل</th>' : ''}${hasNote ? '<th>ملاحظة</th>' : ''}</tr></thead><tbody>${rows.map(({ c }) => `<tr class="${c.ready ? 'ok' : 'miss'}"><td class="bx">${c.ready ? '' : '☐'}</td><td class="item">${esc(c.name || cname2(c))}<small>${esc(cname2(c))}</small></td><td class="n">${qtyTxt(c)}</td><td class="n">${req(c, o) != null ? fmt(req(c, o)) : ''}</td><td>${c.ready ? '<span class="tag ok">✓ واصل</span>' : '<span class="tag miss">✗ ناقص</span>'}</td>${hasDate ? `<td class="n">${c.ready ? dmy(c.readyAt) : ''}</td>` : ''}${hasNote ? `<td>${esc(c.note)}</td>` : ''}</tr>`).join('')}</tbody></table>` : '<div class="note">كل المكوّنات واصلة ✓</div>'}${o.notes ? `<div class="note">ملاحظات: ${esc(o.notes)}</div>` : ''}</div>`; }).join('')).join('');
+      ${rows.length ? `<table><thead><tr><th class="bx"></th><th style="width:34%">الصنف</th><th style="width:15%">للقطعة</th><th style="width:13%">المطلوب</th><th style="width:13%">الحالة</th>${hasDate ? '<th style="width:11%">وصل</th>' : ''}${hasNote ? '<th>ملاحظة</th>' : ''}</tr></thead><tbody>${rows.map(({ c }) => `<tr class="${c.ready ? 'ok' : 'miss'}"><td class="bx">${c.ready ? '' : '☐'}</td><td class="item">${esc(c.name || cname2(c))}<small>${esc(cname2(c))}</small></td><td class="n">${qtyTxt(c)}</td><td class="n">${req(c, o) != null ? fmt(req(c, o)) : ''}${isPart(c, o) ? `<small>وصل ${fmt(gotN(c))} · باقي <b style="color:#000">${fmt(req(c, o) - gotN(c))}</b></small>` : ''}</td><td>${c.ready ? '<span class="tag ok">✓ واصل</span>' : isPart(c, o) ? '<span class="tag part">◐ جزئي</span>' : '<span class="tag miss">✗ ناقص</span>'}</td>${hasDate ? `<td class="n">${c.ready ? dmy(c.readyAt) : ''}</td>` : ''}${hasNote ? `<td>${esc(c.note)}</td>` : ''}</tr>`).join('')}</tbody></table>` : '<div class="note">كل المكوّنات واصلة ✓</div>'}${o.notes ? `<div class="note">ملاحظات: ${esc(o.notes)}</div>` : ''}</div>`; }).map(h => `<tr><td>${h}</td></tr>`).join('') + '</tbody></table>').join('');
   const title = (missOnly ? 'نواقص ' : 'تفاصيل أوردرات ') + (onlyId ? cname(onlyId) : 'كل العملاء');
   $('print').dataset.title = title + ' · ' + dmy(nowISO());
   doPrint(phead(title) + sum + buyTbl + (missOnly ? '' : '<h2 class="sh">تفاصيل كل أوردر</h2>') + (body || '<p>مفيش أوردرات شغالة</p>'));
