@@ -508,7 +508,7 @@ function rowHTML(o, i){ const ln = o.lines?.[0] || {}, d = dueInfo(o);
   return `<div class="row${d && d.d < 0 ? ' over' : ''}${i === KF ? ' kf' : ''}" data-oc="${esc(o.oc)}" style="--i:${Math.min(i, 14)}" tabindex="0">
     <span class="code">${esc(o.oc)}</span><span class="cl">${esc(cname(o.clientId))}</span>
     <span class="pr">${esc(ln.product || '—')}${ln.size ? ' · ' + esc(ln.size) : ''}</span><span class="q num">${fmt(ln.qty)}</span>
-    ${rb(o)}<span class="dw">${dueChip(o)}</span>${pill(o, true)}</div>`; }
+    ${rb(o)}<span class="dw">${dueChip(o)}</span>${pill(o, true)}<span style="grid-column:1/-1;justify-self:start"><button type="button" class="btn line" data-jo="${esc(o.oc)}" style="min-height:30px;padding:0 10px;font-size:12px">تصدير للجوب أوردر</button></span></div>`; }
 const listBox = (rows, head = true) => `<div class="panel">${head ? '<div class="thead"><span>الكود</span><span>العميل</span><span>المنتج</span><span>الكمية</span><span>المكونات</span><span>الميعاد</span><span>الحالة</span></div>' : ''}<div class="anim">${rows}</div></div>`;
 const emptyBox = (icn, h, p, act) => `<div class="panel"><div class="empty"><div class="ei">${ic(icn)}</div><h3>${h}</h3><p>${p}</p>${act || ''}</div></div>`;
 
@@ -595,8 +595,9 @@ function vSettings(){
 function bindView(){
   const V = $('view'); if (CUR === 'orders') { const s = $('sort'); if (s){ s.value = SORT; s.onchange = () => { SORT = s.value; render(); }; } }
   V.onclick = async e => {
-    const t = e.target.closest('[data-patt],[data-part],[data-act],[data-f],[data-v2],[data-by],[data-tick],[data-open],[data-adv],[data-deliver],[data-inv],[data-printc],[data-client],[data-theme],[data-oc],[data-stop]');
+    const t = e.target.closest('[data-patt],[data-part],[data-act],[data-f],[data-v2],[data-by],[data-tick],[data-open],[data-adv],[data-deliver],[data-inv],[data-printc],[data-client],[data-theme],[data-jo],[data-oc],[data-stop]');
     if (!t) return; const d = t.dataset;
+    if (d.jo) { e.preventDefault(); e.stopPropagation(); return exportJO(d.jo); }
     if ('stop' in d) return;
     if (d.f) { FIL = d.f; $('q').value = ''; if (CUR !== 'orders') return go('orders'); return render(); }
     if (d.v2) return go(d.v2);
@@ -800,6 +801,8 @@ $('sheet').addEventListener('keydown', e => { if (e.key !== 'Tab') return; const
 function download(name, text, type){ const b = new Blob([text], { type }), f = new File([b], name, { type });
   if (navigator.canShare && /iP(hone|ad|od)|Android/i.test(navigator.userAgent) && navigator.canShare({ files:[f] })) return navigator.share({ files:[f], title:name }).catch(() => {});
   const u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); }
+function exportJO(oc){ const o = S.orders[oc]; if (!o) return toast('الأوردر مش موجود');
+  download(`jo-${oc}.json`, JSON.stringify({ t:'nkjo', v:1, kind:'order2jo', oc:o.oc, client:cname(o.clientId), date:String(o.createdAt || '').slice(0, 10), dueDate:o.dueDate || '', notes:o.notes || '', lines:o.lines || [], comps:o.comps || [] }, null, 1), 'application/json'); }
 async function exportJSON(){ await download(`orders-backup-${today()}.json`, JSON.stringify(S), 'application/json'); await kv.set('lastExport', Date.now()); if (!DIR) { lastDrive = Date.now(); setBadge('local'); } toast('اتعملت النسخة'); }
 function csvCell(v){ v = String(v ?? ''); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
 function exportCSV(){ const L = CUR === 'orders' ? filtered() : ord();
